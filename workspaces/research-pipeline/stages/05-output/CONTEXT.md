@@ -42,6 +42,13 @@ Example: `report-2026-03-11-ai-agents.md`
 10. Generate PDF via pandoc (see PDF Generation section)
 11. Run audit checks, revise if needed
 
+## Checkpoints
+
+| After Step | Agent Presents | Human Decides |
+|------------|---------------|---------------|
+| 9 (Write markdown) | report-YYYY-MM-DD-slug.md formatted content | Approve before PDF generation |
+| 10 (Generate PDF) | PDF file ready for distribution | Confirm before publishing |
+
 ## PDF Generation
 
 After markdown is written, generate PDF:

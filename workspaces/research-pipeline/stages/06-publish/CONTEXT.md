@@ -59,6 +59,13 @@ gws email send \
    ```
 5. Record published URL and KB ID in publish-log.md
 
+## Checkpoints
+
+| After Step | Agent Presents | Human Decides |
+|------------|---------------|---------------|
+| Step 1 (Local KB save) | Report copied to ~/knowledge-base/ | Confirm before external publishing |
+| Step 3 (Drive publish) | Google Drive URL for published doc | Approve before finalizing |
+
 ## Audit
 
 | Check | Pass Condition |

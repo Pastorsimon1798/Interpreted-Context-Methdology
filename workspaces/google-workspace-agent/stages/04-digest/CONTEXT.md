@@ -33,6 +33,12 @@ Present a consolidated summary of all agent activity.
 6. Write digest to output
 7. (Optional) Deliver via email or Slack
 
+## Checkpoints
+
+| After Step | Agent Presents | Human Decides |
+|------------|---------------|---------------|
+| 6 (Write digest) | digest.md with summary of all activity | Approve before sending/displaying |
+
 ## Audit
 
 | Check | Pass Condition |
