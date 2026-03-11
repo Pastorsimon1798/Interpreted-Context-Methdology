@@ -9,6 +9,8 @@ google-workspace-agent/
 ├── CLAUDE.md              (you are here)
 ├── CONTEXT.md             (start here for task routing)
 ├── setup/                 (onboarding questionnaire and gws setup)
+├── skills/                (persona and workflow skills)
+│   └── persona-adhd-assistant/
 ├── stages/
 │   ├── 01-triage/         (inbox monitoring and prioritization)
 │   ├── 02-extraction/     (knowledge extraction to PARA folders)
@@ -41,6 +43,15 @@ google-workspace-agent/
 | Create calendar events | `stages/03-calendar/CONTEXT.md` |
 | Generate activity digest | `stages/04-digest/CONTEXT.md` |
 | Initial setup | `setup/questionnaire.md` |
+| ADHD-friendly persona | `skills/persona-adhd-assistant/SKILL.md` |
+
+## Skills
+
+Skills bundle context, instructions, and tips for specific roles or workflows.
+
+| Skill | Purpose |
+|-------|---------|
+| `persona-adhd-assistant` | ADHD-friendly workspace assistant with prioritized workflows |
 
 ## GWS Service Matrix
 
