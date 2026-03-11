@@ -10,6 +10,8 @@ Format synthesized knowledge into final deliverable with proper file outputs.
 | Previous stage | `../02-discovery/output/sources-collected.md` | Credibility scores | Source quality data |
 | Brand vault | `../../brand-vault.md` | Research Style, Output Defaults | Format preferences |
 | Reference | `references/output-templates/` | Template based on format | Structure |
+| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
+| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
 
 ## Output File Naming Convention
 
@@ -35,12 +37,13 @@ Example: `report-2026-03-11-ai-agents.md`
 3. Determine output format (report, dataset, or documentation)
 4. Generate topic slug from research goal
 5. Load appropriate template from references/output-templates/
-6. Apply citation style from brand vault
-7. Format content according to template structure
-8. Add metadata (date, methodology summary, source count, avg credibility)
-9. Write markdown file with proper naming: `report-{date}-{slug}.md`
-10. Generate PDF via pandoc (see PDF Generation section)
-11. Run audit checks, revise if needed
+6. **[Security]** Sanitize any source excerpts before inclusion in report
+7. Apply citation style from brand vault
+8. Format content according to template structure
+9. Add metadata (date, methodology summary, source count, avg credibility)
+10. Write markdown file with proper naming: `report-{date}-{slug}.md`
+11. Generate PDF via pandoc (see PDF Generation section)
+12. Run audit checks, revise if needed
 
 ## Checkpoints
 
@@ -80,6 +83,7 @@ pandoc "report-YYYY-MM-DD-{topic-slug}.md" \
 | Metadata present | Date, sources, methodology documented |
 | File naming | Follows report-YYYY-MM-DD-slug.md format |
 | PDF exists | Corresponding .pdf file generated |
+| Content sanitized | All source excerpts passed security validation |
 
 ## Outputs
 

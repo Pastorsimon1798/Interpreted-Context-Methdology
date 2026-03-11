@@ -12,6 +12,8 @@ Extract valuable information from newsletters and reference emails for the knowl
 | Config | `shared/drive-ids.sh` | - | Google Drive folder IDs |
 | Config | Google Drive | Knowledge Base folder | Native Drive storage |
 | Skills | gws-drive, gws-keep, recipe-save-email-attachments, persona-researcher | - | Processing capabilities |
+| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
+| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
 
 ## Task Integration
 
@@ -32,14 +34,15 @@ Action items extracted during this stage can be synced to Google Tasks:
 
 1. Read flagged emails from triage report
 2. Extract attachments using recipe-save-email-attachments
-3. Extract valuable information per extraction-rules.md
-4. Classify each extraction into PARA category
-5. Create Google Doc using `scripts/kb-create.sh` in appropriate PARA folder
-6. Capture fleeting notes to Google Keep
-7. Link each extraction back to source email (message ID)
-8. Apply Gmail label (KB/Projects, KB/Areas, KB/Resources, KB/Archive) to source email
-9. [Checkpoint] If supervised = true, pause for user review
-10. Sync action items to Google Tasks
+3. **[Security]** Sanitize content before saving to knowledge base
+4. Extract valuable information per extraction-rules.md
+5. Classify each extraction into PARA category
+6. Create Google Doc using `scripts/kb-create.sh` in appropriate PARA folder
+7. Capture fleeting notes to Google Keep
+8. Link each extraction back to source email (message ID)
+9. Apply Gmail label (KB/Projects, KB/Areas, KB/Resources, KB/Archive) to source email
+10. [Checkpoint] If supervised = true, pause for user review
+11. Sync action items to Google Tasks
 
 ## Checkpoints
 
@@ -54,6 +57,7 @@ Action items extracted during this stage can be synced to Google Tasks:
 | All extractions linked | Each extraction references source email message ID |
 | PARA category assigned | Every extracted file has a PARA category |
 | No duplication | No duplicate content across extractions |
+| Content sanitized | All extracted content passed security validation |
 
 ## Outputs
 

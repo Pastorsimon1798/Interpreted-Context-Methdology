@@ -12,6 +12,8 @@ Present a consolidated summary of all agent activity.
 | Shared | `shared/digest-template.md` | Full file | ADHD-friendly formatting |
 | Config | `twice-daily` | - | Digest frequency |
 | Skills | gws-calendar-agenda, gws-workflow-weekly-digest | - | Processing capabilities |
+| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
+| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
 
 ## Commands
 
@@ -29,9 +31,10 @@ Present a consolidated summary of all agent activity.
 2. Summarize triage: emails processed, categories, urgent items, tasks created
 3. Summarize extractions: new knowledge files, PARA distribution, attachments saved
 4. Summarize calendar: events created, focus blocks, upcoming deadlines
-5. Format using ADHD-friendly template
-6. Write digest to output
-7. (Optional) Deliver via email or Slack
+5. **[Security]** Sanitize any email snippets before including in digest
+6. Format using ADHD-friendly template
+7. Write digest to output
+8. (Optional) Deliver via email or Slack
 
 ## Checkpoints
 
@@ -45,6 +48,7 @@ Present a consolidated summary of all agent activity.
 |-------|---------------|
 | All action items accounted | Every action item from triage appears in digest |
 | Digest scannable | Content uses ADHD-friendly formatting (bullet points, clear sections, visual hierarchy) |
+| Content sanitized | All email snippets passed security validation |
 
 ## Outputs
 

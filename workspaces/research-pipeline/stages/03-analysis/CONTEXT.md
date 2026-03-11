@@ -9,25 +9,28 @@ Process collected sources and extract insights.
 | Previous stage | `../02-discovery/output/sources-collected.md` | Full file | Sources to analyze |
 | Previous stage | `../01-scoping/output/research-goal.md` | Key questions | Questions to answer |
 | Reference | `references/analysis-frameworks.md` | Full file | Categorization patterns |
+| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
+| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
 
 ## Process
 
 1. Read all collected sources and annotations
-2. Apply categorization framework (theme, type, finding)
-3. Extract key findings from each source
-4. Link findings to specific research questions
-5. Identify patterns across multiple sources
-6. Note contradictions between sources
-7. Identify gaps in evidence
-8. Organize findings by question and theme
-9. Run audit checks, revise if needed
-10. Write analyzed findings document to output/
+2. **[Security]** Re-sanitize any quotes/excerpts before extraction
+3. Apply categorization framework (theme, type, finding)
+4. Extract key findings from each source
+5. Link findings to specific research questions
+6. Identify patterns across multiple sources
+7. Note contradictions between sources
+8. Identify gaps in evidence
+9. Organize findings by question and theme
+10. Run audit checks, revise if needed
+11. Write analyzed findings document to output/
 
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |
 |------------|---------------|---------------|
-| 10 (Write findings) | findings-analyzed.md with categorized insights | Approve analysis before synthesis |
+| 11 (Write findings) | findings-analyzed.md with categorized insights | Approve analysis before synthesis |
 
 ## Audit
 
@@ -38,6 +41,7 @@ Process collected sources and extract insights.
 | Patterns identified | Cross-source patterns noted |
 | Evidence linked | Each claim linked to source |
 | Contradictions noted | Conflicting findings identified |
+| Excerpts sanitized | All quoted content passed security check |
 
 ## Outputs
 

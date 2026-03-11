@@ -11,18 +11,21 @@ Read, categorize, and prioritize incoming emails for action and extraction.
 | Shared | `shared/prioritization-rules.md` | Full file | Urgency/importance criteria |
 | Shared | `shared/email-categories.md` | Full file | User's taxonomy |
 | Skills | gws-gmail-triage, gws-workflow-email-to-task, gws-tasks, persona-exec-assistant, persona-project-manager | - | Processing capabilities |
+| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
+| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
 
 ## Process
 
 1. Set up push notifications via `gws gmail-watch`
 2. Fetch unread/recent emails via `gws gmail messages list`
-3. Categorize each email using email-categories.md taxonomy
-4. Score urgency using prioritization-rules.md
-5. Identify action-required items
-6. Convert action items to Google Tasks via `gws tasks`
-7. Flag emails with valuable content for extraction
-8. Generate triage-report.md
-9. [Checkpoint] If supervised = true, pause for user review
+3. **[Security]** Sanitize email content using security-input-sanitization skill
+4. Categorize each email using email-categories.md taxonomy
+5. Score urgency using prioritization-rules.md
+6. Identify action-required items
+7. Convert action items to Google Tasks via `gws tasks`
+8. Flag emails with valuable content for extraction
+9. Generate triage-report.md
+10. [Checkpoint] If supervised = true, pause for user review
 
 ## Checkpoints
 
@@ -37,6 +40,7 @@ Read, categorize, and prioritize incoming emails for action and extraction.
 | All emails categorized | Every processed email has a category assigned |
 | Action items identified | All action-required emails have corresponding tasks |
 | No auto-replies sent | No email responses were sent without explicit approval |
+| Content sanitized | All email bodies passed security validation |
 
 ## Outputs
 
