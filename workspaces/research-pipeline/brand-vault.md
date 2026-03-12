@@ -55,3 +55,49 @@ These formatting preferences ensure output is accessible and scannable:
 - **Concise paragraphs**: Keep blocks of text short and focused
 - **Bold key terms**: Highlight important concepts for quick scanning
 - **Consistent formatting**: Maintain predictable patterns throughout documents
+
+---
+
+## Quality Targets
+
+**RQS Targets:**
+
+| Metric | Target | Minimum |
+|--------|--------|---------|
+| Per-research RQS | 75+ | 60 |
+| 7-day average | 70+ | 55 |
+| Monthly improvement | +2 points | -- |
+
+**RQS Component Priorities:**
+
+| Component | Target | Priority |
+|-----------|--------|----------|
+| Source Credibility | 70+ | HIGH (35% weight) |
+| Depth | 75+ | HIGH (25% weight) |
+| Actionability | 70+ | MEDIUM (20% weight) |
+| Recency | 80+ | LOW (10% weight) |
+| Gap Fill | 70+ | LOW (10% weight) |
+
+---
+
+## Experiment Policy
+
+**Default Behavior:** Every research session runs 1 AUTO experiment. This is how improvements accumulate.
+
+**Experiment Types:**
+
+| Type | Behavior | Approval |
+|------|----------|----------|
+| **AUTO** | Runs every session | Never needed |
+| **LOW-RISK** | Runs by default, can opt out | Not required |
+| **HIGH-RISK** | Explicit request only | Required |
+
+**Skipping Experiments:** Use `research strict [topic]` to skip all experiments (for baselines, time-sensitive work)
+
+**Graduation:** After 3 runs with avg +3 RQS improvement, AUTO experiments graduate to "standard practice"
+
+**Logging:** All experiments must be logged in `IMPROVEMENT-LOG.md` with:
+- Experiment ID
+- RQS before/after
+- Change (Δ)
+- Keep/Discard decision

@@ -53,18 +53,60 @@ Research pipeline supports three modes:
 
 ---
 
+## Quality Metrics
+
+**Current RQS:** -- (no research completed yet)
+
+**7-day Average:** --
+
+**Trend:** → (no data)
+
+**Components:**
+| Component | Last Score | 7-day Avg | Trend | Target |
+|-----------|------------|-----------|-------|--------|
+| Source Credibility | -- | -- | → | 70 |
+| Depth | -- | -- | → | 75 |
+| Actionability | -- | -- | → | 70 |
+| Recency | -- | -- | → | 80 |
+| Gap Fill | -- | -- | → | 70 |
+
+**Weakest Component:** -- (will be identified after first research)
+
+**Last Improvement:** -- (system initialized)
+
+---
+
+## Experiment State
+
+**Current Experiment:** None (awaiting first research)
+
+**Experiment History:**
+
+| Session | Experiment | Result | Δ |
+|---------|------------|--------|---|
+| -- | -- | -- | -- |
+
+**Patterns Learned:** None yet
+
+**Pending Generations:** None
+
+---
+
 ## How to Use This File
 
 **For Agents:**
 1. Read this file at the start of each session to understand current state
 2. Update after each significant action or stage completion
-3. Keep entries concise - this is a dashboard, not a log
+3. Update Quality Metrics after each research run
+4. Keep entries concise - this is a dashboard, not a log
 
 **For Humans:**
 1. Edit Next Steps to redirect agent focus
 2. Add Blockers when external input is needed
 3. Record Decisions to prevent circular discussions
+4. Review Quality Metrics to track improvement over time
 
 **Reset:**
 - When starting a new pipeline run, archive this file and start fresh
 - Keep decisions that apply across runs, reset stage-specific state
+- Preserve Quality Metrics history for trend tracking

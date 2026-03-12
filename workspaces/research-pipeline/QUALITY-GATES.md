@@ -116,7 +116,25 @@ Each gate has two layers:
 | Conclusions drawn | Answers to research questions stated | Complete synthesis |
 | Contradictions addressed | Conflicting findings explained or flagged | Address gaps |
 
-**Human Gate:** Present conclusions for review before generating final output.
+### Layer 3 (Quality Scoring)
+
+| Check | Pass Condition | On Fail |
+|-------|---------------|---------|
+| RQS calculated | Research Quality Score computed using `scoring/RQS-CALCULATOR.md` | Calculate RQS |
+| RQS ≥ 60 | Minimum quality threshold met | Return to synthesis with improvement guidance |
+| RQS logged | Score recorded in `PROGRESS.md` Quality Metrics section | Log score |
+| Experiment logged | If experiment was run, log to `IMPROVEMENT-LOG.md` | Log experiment |
+
+**RQS-Based Routing:**
+
+| RQS Score | Action |
+|-----------|--------|
+| 90-100 | Flag for KB archiving, proceed to output |
+| 75-89 | Auto-approve for archive, proceed to output |
+| 60-74 | Acceptable, proceed to output |
+| <60 | Return to synthesis stage |
+
+**Human Gate:** Present conclusions AND RQS score for review before generating final output.
 
 ---
 
@@ -170,6 +188,6 @@ Each gate has two layers:
 | Scoping → Discovery | Yes | Goal confirmation |
 | Discovery → Analysis | No | Sources gathered |
 | Analysis → Synthesis | No | Findings extracted |
-| Synthesis → Output | Yes | Conclusions review |
+| Synthesis → Output | Yes | Conclusions + RQS review |
 | Output → Publish | Yes | Final approval |
 | Post-Pipeline | Optional | Delivery confirmed |
