@@ -44,6 +44,14 @@ Gather information from web, documents, and other sources with credibility scori
 
 **Default minimum: 40 points**
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** Sources gathered can be counted, credibility scores can be validated, coverage map can be checked programmatically.
+
+**Human Review Trigger:** Only if source coverage is insufficient or credibility scores seem anomalous.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

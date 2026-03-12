@@ -26,6 +26,14 @@ Process collected sources and extract insights.
 10. Run audit checks, revise if needed
 11. Write analyzed findings document to output/
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** Findings extracted can be counted, categorization structure can be validated, pattern detection can be verified.
+
+**Human Review Trigger:** None required. Auto-proceed to synthesis if audit passes.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

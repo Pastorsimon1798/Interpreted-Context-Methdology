@@ -32,6 +32,14 @@ Create and manage calendar events based on action items and extracted dates.
 7. [Checkpoint] If supervised = true, pause for user review
 8. Create events via `gws calendar events insert`
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** Events created can be verified via Calendar API, conflicts can be detected programmatically.
+
+**Human Review Trigger:** Only in supervised mode. Auto-proceed in partial/autonomous mode if no conflicts detected.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

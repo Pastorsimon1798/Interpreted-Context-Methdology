@@ -79,6 +79,14 @@ Combine findings into coherent conclusions through multi-pass analysis.
 10. Run audit checks, revise if needed
 11. Write synthesized knowledge document to output/
 
+## Verifiability
+
+**Classification:** `EXPERT-VERIFIABLE`
+
+**Verification Method:** Conclusions require expert judgment to assess whether evidence supports claims. Contradiction resolution and gap assessment need human review.
+
+**Human Review Trigger:** Always. Present conclusions with evidence for approval before generating output.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

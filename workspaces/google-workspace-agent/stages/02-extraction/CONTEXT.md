@@ -44,6 +44,14 @@ Action items extracted during this stage can be synced to Google Tasks:
 10. [Checkpoint] If supervised = true, pause for user review
 11. Sync action items to Google Tasks
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** Extractions can be counted, PARA categories can be validated, source links can be verified.
+
+**Human Review Trigger:** Only in supervised mode. Auto-proceed in partial/autonomous mode if audit passes.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

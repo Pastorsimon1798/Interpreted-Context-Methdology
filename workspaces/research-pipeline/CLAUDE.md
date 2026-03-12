@@ -37,6 +37,7 @@ research-pipeline/
 | `monitor gaps` | Show only knowledge gaps detected |
 | `setup` | Run onboarding questionnaire |
 | `status` | Show pipeline completion for all stages |
+| `resume` | Read PROGRESS.md and continue from last checkpoint |
 
 ## Research Trigger Workflows
 

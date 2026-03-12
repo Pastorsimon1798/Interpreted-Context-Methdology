@@ -45,6 +45,14 @@ Example: `report-2026-03-11-ai-agents.md`
 11. Generate PDF via pandoc (see PDF Generation section)
 12. Run audit checks, revise if needed
 
+## Verifiability
+
+**Classification:** `EXPERT-VERIFIABLE`
+
+**Verification Method:** Report format can be validated, but quality of writing and appropriateness of structure require human judgment.
+
+**Human Review Trigger:** Always. Present formatted report for approval before PDF generation.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

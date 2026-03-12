@@ -36,6 +36,14 @@ Present a consolidated summary of all agent activity.
 7. Write digest to output
 8. (Optional) Deliver via email or Slack
 
+## Verifiability
+
+**Classification:** `JUDGMENT-REQUIRED`
+
+**Verification Method:** Digest completeness can be checked, but quality of summary and ADHD-friendly formatting requires human judgment.
+
+**Human Review Trigger:** Always present digest for review before sending/displaying (unless autonomous mode).
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

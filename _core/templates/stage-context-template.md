@@ -44,6 +44,23 @@
 |------------|---------------|---------------|
 | [step #] | [what options/output to show] | [what direction to choose] |
 
+## Verifiability
+
+<!-- Classify how this stage's output can be verified. This tells the agent
+     when to auto-proceed vs escalate to human review.
+
+     MACHINE-VERIFIABLE: Can check programmatically (file exists, format valid, no placeholders)
+     EXPERT-VERIFIABLE: Needs domain knowledge to assess quality
+     JUDGMENT-REQUIRED: Subjective assessment, human must review
+
+     Choose ONE classification and delete the others. -->
+
+**Classification:** `{{MACHINE-VERIFIABLE | EXPERT-VERIFIABLE | JUDGMENT-REQUIRED}}`
+
+**Verification Method:** {{How to verify this stage's output}}
+
+**Human Review Trigger:** {{Conditions that require human review before proceeding}}
+
 ## Audit
 
 <!-- Quality checks before the output is considered done. The agent runs these

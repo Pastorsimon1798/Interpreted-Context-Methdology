@@ -25,6 +25,7 @@ google-workspace-agent/
 |---------|--------|
 | `setup` | Run onboarding questionnaire and configure workspace |
 | `status` | Show pipeline completion for all stages |
+| `resume` | Read PROGRESS.md and continue from last checkpoint |
 | `triage` | Run inbox triage immediately |
 | `digest` | Generate digest from last run |
 | `standup` | Generate daily standup report (emails, tasks, calendar) |

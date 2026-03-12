@@ -59,6 +59,14 @@ gws email send \
    ```
 5. Record published URL and KB ID in publish-log.md
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** File copied to KB, PDF generated, email sent or Drive URL returned - all can be verified programmatically.
+
+**Human Review Trigger:** Confirm before external publishing (email or Drive) to prevent accidental publication.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

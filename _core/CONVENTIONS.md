@@ -297,6 +297,52 @@ For non-code workspaces (content writing, course design), this pattern does not 
 
 ---
 
+## Pattern 16: Clean Restart Protocol
+
+When context degrades, agents should reset cleanly rather than work around the degradation. This protocol defines when and how to restart.
+
+### Context Zones
+
+| Zone | Symptoms | Action |
+|------|----------|--------|
+| GREEN | Fresh context, accurate recall | Normal operation |
+| YELLOW | Some repetition, minor confusion | Compress less relevant history |
+| ORANGE | Missing context, circular reasoning | Compress aggressively, load PROGRESS.md |
+| RED | Hallucinations, lost decisions | Full reset with PROGRESS.md |
+| BLACK | Corrupted state, wrong task entirely | Kill and restart fresh |
+
+### Reset Procedure
+
+When reaching RED or BLACK:
+
+1. **Preserve state:** Write current state to PROGRESS.md before resetting
+2. **Archive context:** Move relevant working files to a safe location if needed
+3. **Reset:** Start a new conversation
+4. **Restore:** Read PROGRESS.md to resume from the checkpoint
+5. **Verify:** Confirm the task and next steps match expectations
+
+### What Survives a Reset
+
+- PROGRESS.md (session state)
+- output/ folder artifacts (work products)
+- Decisions recorded in PROGRESS.md
+
+### What Gets Lost
+
+- Conversation history
+- Loaded but unprocessed reference files
+- Unwritten thoughts or analysis
+
+### Integration
+
+Workspaces should reference this protocol in their CLAUDE.md:
+
+```
+| `restart` | Follow Pattern 16 clean restart protocol |
+```
+
+---
+
 ## Quality Guardrails
 
 - CONTEXT.md files: under 80 lines

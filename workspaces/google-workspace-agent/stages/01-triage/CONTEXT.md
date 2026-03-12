@@ -27,6 +27,14 @@ Read, categorize, and prioritize incoming emails for action and extraction.
 9. Generate triage-report.md
 10. [Checkpoint] If supervised = true, pause for user review
 
+## Verifiability
+
+**Classification:** `JUDGMENT-REQUIRED`
+
+**Verification Method:** Email prioritization and categorization involve subjective judgment. Automated checks can verify completeness but not quality of decisions.
+
+**Human Review Trigger:** High-priority categorizations and action item creation require human confirmation unless in autonomous mode.
+
 ## Checkpoints
 
 | After Step | Agent Presents | Human Decides |

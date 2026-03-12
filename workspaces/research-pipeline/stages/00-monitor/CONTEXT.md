@@ -204,6 +204,14 @@ This stage handles:
 |------------|---------------|---------------|
 | 5 (Output digest) | discovery-YYYY-MM-DD-*.md with prioritized items | Approve before emailing or proceeding to research |
 
+## Verifiability
+
+**Classification:** `MACHINE-VERIFIABLE`
+
+**Verification Method:** Raw data exists, scores calculated, digest formatted correctly.
+
+**Human Review Trigger:** None required. Auto-proceed unless user wants to adjust scoring criteria.
+
 ## Audit
 
 | Check | Pass Condition |
