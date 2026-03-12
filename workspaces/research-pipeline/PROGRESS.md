@@ -55,40 +55,44 @@ Research pipeline supports three modes:
 
 ## Quality Metrics
 
-**Current RQS:** -- (no research completed yet)
+**Current RQS:** 77 (baseline avg from 4 research outputs)
 
-**7-day Average:** --
+**7-day Average:** 77
 
-**Trend:** → (no data)
+**Trend:** → (baseline established)
 
 **Components:**
 | Component | Last Score | 7-day Avg | Trend | Target |
 |-----------|------------|-----------|-------|--------|
-| Source Credibility | -- | -- | → | 70 |
-| Depth | -- | -- | → | 75 |
-| Actionability | -- | -- | → | 70 |
-| Recency | -- | -- | → | 80 |
-| Gap Fill | -- | -- | → | 70 |
+| Source Credibility | 71 | 71 | → | 70 |
+| Depth | 75 | 75 | → | 75 |
+| Actionability | 75 | 75 | → | 70 |
+| Recency | 88 | 88 | → | 80 |
+| Gap Fill | 76 | 76 | → | 70 |
 
-**Weakest Component:** -- (will be identified after first research)
+**Weakest Component:** Actionability (75, target 70)
 
-**Last Improvement:** -- (system initialized)
+**Last Improvement:** Baseline established (2026-03-12)
 
 ---
 
 ## Experiment State
 
-**Current Experiment:** None (awaiting first research)
+**Current Experiment:** None (awaiting next research)
 
 **Experiment History:**
 
 | Session | Experiment | Result | Δ |
 |---------|------------|--------|---|
-| -- | -- | -- | -- |
+| Retroactive | Baseline scoring | Baseline RQS: 77 | -- |
 
-**Patterns Learned:** None yet
+**Patterns Learned:**
+- Actionability (75) is weakest component → prioritize Actionability experiments
+- Recency (88) is strongest → no urgent need for Recency experiments
 
 **Pending Generations:** None
+
+**Next Experiment:** Should target Actionability (A007: Implementation steps template)
 
 ---
 

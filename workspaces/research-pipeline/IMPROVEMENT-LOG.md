@@ -208,7 +208,8 @@ Experiments that don't work are removed from rotation automatically.
 
 | Period | Avg RQS | Trend | Experiments | Best Δ | Notes |
 |--------|---------|-------|-------------|--------|-------|
-| Baseline (2026-03-11) | -- | → | 0 | -- | System initialized |
+| Baseline (2026-03-11) | 77 | → | 0 | -- | Retroactive scoring of 4 outputs |
+| 2026-03-12 | -- | → | 0 | -- | System initialized, awaiting first experiment |
 
 ---
 
@@ -217,6 +218,19 @@ Experiments that don't work are removed from rotation automatically.
 | ID | Date | Experiment | Before | After | Δ | Component | Success? |
 |----|------|------------|--------|-------|---|-----------|----------|
 | -- | -- | -- | -- | -- | -- | -- | -- |
+
+---
+
+## Retroactive Baseline Scores
+
+| Research Output | Date | Cred | Depth | Act | Rec | Gap | RQS |
+|-----------------|------|------|-------|-----|-----|-----|-----|
+| Evaluation Paradigms for AI Output | 2026-03-11 | 73 | 85 | 80 | 90 | 75 | **79** |
+| MWP Agent Use Cases | 2026-03-11 | 70 | 78 | 75 | 85 | 80 | **76** |
+| GWS CLI Meta-Research | 2026-03-11 | 72 | 70 | 75 | 90 | 80 | **75** |
+| GWS Agent Workspace Audit | 2026-03-11 | 68 | 65 | 70 | 85 | 70 | **71** |
+
+**Baseline Avg RQS: 77**
 
 ---
 
