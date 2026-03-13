@@ -56,6 +56,16 @@ Topics matching user's interests (AI, coding, productivity, neurodiversity, entr
 - Email is promotional AND older than 7 days
 - Newsletter NOT from starred senders AND older than 14 days
 - No action required AND no calendar reference
+- LinkedIn marketing emails (upgrade, premium, discover) - immediate
+- LinkedIn notifications (non-job) - immediate
+
+### LinkedIn Subcategory Rules
+
+| Subcategory | Pattern | Action |
+|-------------|---------|--------|
+| `linkedin-job` | "job alert", "job opening", "recommended job", "applied" | Keep in inbox |
+| `linkedin-marketing` | "upgrade", "premium", "try", "discover", "trending" | Auto-archive |
+| `linkedin-notification` | All other LinkedIn emails | Auto-archive |
 
 ---
 
@@ -93,4 +103,4 @@ Priority Score = (Urgency) + (Importance) - (Deprioritization)
 
 ---
 
-*Last updated: 2026-03-10*
+*Last updated: 2026-03-11*

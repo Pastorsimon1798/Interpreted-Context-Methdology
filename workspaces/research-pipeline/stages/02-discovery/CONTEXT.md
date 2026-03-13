@@ -2,6 +2,17 @@
 
 Gather information from web, documents, and other sources with credibility scoring.
 
+## Documentation Navigation
+
+When reading ICM's own documentation, use jDocMunch instead of Read:
+
+```
+search_sections(repo="local/Interpreted-Context-Methdology", query="...")
+get_section(section_id="...")
+```
+
+**Never read entire CLAUDE.md or CONTEXT.md files - retrieve only needed sections.**
+
 ## Inputs
 
 | Source | File/Location | Section/Scope | Why |
@@ -9,6 +20,7 @@ Gather information from web, documents, and other sources with credibility scori
 | Previous stage | `../01-scoping/output/research-goal.md` | Full file | Research plan |
 | Brand vault | `../../brand-vault.md` | Quality Thresholds | Source standards |
 | Skill | `../../skills/web-research/SKILL.md` | Full file | Search capability |
+| Skill | `../../shared/skills/code-analysis/SKILL.md` | Full file | Code analysis (for GitHub repos) |
 | Reference | `references/search-strategies.md` | Full file | Search patterns |
 | Utility | `utils/credibility.md` | Full file | Scoring system |
 | Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
@@ -19,19 +31,20 @@ Gather information from web, documents, and other sources with credibility scori
 1. Read research goal and key questions from previous stage
 2. Plan search strategy for each key question
 3. Execute searches using web-research skill
-4. **[Security]** Sanitize fetched content using security-input-sanitization skill
-5. **For each source found:**
+4. **[Optional - GitHub repos]** If researching code/software, use code-analysis skill to index and explore repositories
+5. **[Security]** Sanitize fetched content using security-input-sanitization skill
+6. **For each source found:**
    - Extract domain metadata (TLD, HTTPS, URL path)
    - Assess content indicators (author, date, type)
    - Calculate credibility score using `utils/credibility.md`
    - Assign tier (High/Medium/Low/Unreliable)
-6. Filter sources below threshold (default: 40 points)
-7. Collect sources with annotations (relevance to questions, credibility score)
-8. Organize sources by question coverage
-9. Identify source gaps needing additional search
-10. **[Checkpoint]** Present source summary with credibility assessment
-11. Run audit checks, revise if needed
-12. Write collected sources document to output/
+7. Filter sources below threshold (default: 40 points)
+8. Collect sources with annotations (relevance to questions, credibility score)
+9. Organize sources by question coverage
+10. Identify source gaps needing additional search
+11. **[Checkpoint]** Present source summary with credibility assessment
+12. Run audit checks, revise if needed
+13. Write collected sources document to output/
 
 ## Credibility Thresholds
 

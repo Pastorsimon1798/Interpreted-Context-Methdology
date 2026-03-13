@@ -2,6 +2,17 @@
 
 An ADHD-friendly agent that monitors inbox, triages emails, extracts valuable information for a knowledge base, and manages calendaring. Read-only by default.
 
+## Key Principle
+
+> **Use the tool as designed. GWS-CLI has `+` helpers FOR AI agents.**
+
+The `+` prefix commands are specifically for common AI tasks:
+- `gws gmail +triage` - Get inbox summary for AI to process
+- `gws calendar +agenda` - Get schedule for AI to analyze
+- `gws gmail +send` - Send AI-composed email
+
+**The AI categorizes, decides, and acts. Scripts are thin wrappers that just call GWS helpers.**
+
 ## Folder Map
 
 ```
@@ -33,108 +44,105 @@ google-workspace-agent/
 | `focus` | Schedule focus time block |
 | `tasks` | Show/sync tasks from triage |
 | `prep` | Prepare context for next meeting |
-| `notify` | Send Chat notification |
 
-## Routing
+## GWS-CLI Helper Reference
 
-| Task | Go To |
-|------|-------|
-| Monitor and triage inbox | `stages/01-triage/CONTEXT.md` |
-| Extract knowledge from emails | `stages/02-extraction/CONTEXT.md` |
-| Create calendar events | `stages/03-calendar/CONTEXT.md` |
-| Generate activity digest | `stages/04-digest/CONTEXT.md` |
-| Initial setup | `setup/questionnaire.md` |
-| ADHD-friendly persona | `skills/persona-adhd-assistant/SKILL.md` |
-
-## Skills
-
-Skills bundle context, instructions, and tips for specific roles or workflows.
-
-| Skill | Purpose |
-|-------|---------|
-| `persona-adhd-assistant` | ADHD-friendly workspace assistant with prioritized workflows |
-
-## GWS Service Matrix
-
-| Service | Features | Integration |
-|---------|----------|-------------|
-| **Gmail** | `+triage`, `+send`, `+reply` | `scripts/run-triage.sh`, `scripts/run-digest.sh` |
-| **Calendar** | `+agenda`, `+insert`, `freebusy` | `scripts/run-calendar.sh` |
-| **Tasks** | `list`, `create`, `sync`, `agenda` | `scripts/run-tasks.sh` |
-| **Drive** | Files CRUD | `scripts/kb-create.sh` |
-| **Workflows** | Cross-service helpers | `shared/gws-workflows.sh` |
-
-## Workflow Commands
-
-### Daily Routines
-
+### Gmail Helpers (for AI)
 ```bash
-# Morning routine
-./scripts/run-calendar.sh agenda                    # See today's schedule
-./shared/gws-workflows.sh standup                   # Full standup report
-./scripts/run-tasks.sh agenda                       # Task agenda
+# Get inbox for AI to triage - AI categorizes using its intelligence
+gws gmail +triage --max 100 --format json
 
-# Process inbox
-./scripts/run-triage.sh                             # Triage emails
-./scripts/run-tasks.sh sync                         # Create tasks from action items
+# Send AI-composed email
+gws gmail +send --to "user@example.com" --subject "Hello" --body "..."
 
-# Schedule focus time
-./scripts/run-calendar.sh insert "[Focus Time]"     # Block focus time
+# Reply to thread (handles threading automatically)
+gws gmail +reply --message-id "..." --body "..."
+
+# Archive email with label (AI decides category)
+gws gmail users messages modify \
+  --params '{"userId":"me","id":"MESSAGE_ID"}' \
+  --json '{"removeLabelIds":["INBOX"],"addLabelIds":["Label_7"]}'
 ```
 
-### Email Workflows
-
+### Calendar Helpers (for AI)
 ```bash
-# Create task from email
-./shared/gws-workflows.sh email-to-task <message_id>
+# Get schedule for AI to analyze
+gws calendar +agenda --today --format json
+gws calendar +agenda --week --format json
+gws calendar +agenda --days 3 --calendar "Work"
 
-# Send digest to inbox
-./scripts/run-digest.sh --email
+# Create event (AI can schedule)
+gws calendar +insert --summary "Meeting" --start "2026-03-12T14:00:00"
 ```
 
-### Calendar Workflows
-
+### Drive Helpers (for AI)
 ```bash
-# Show agenda
-./scripts/run-calendar.sh agenda
-
-# Check free/busy
-./scripts/run-calendar.sh freebusy
-
-# Create event with smart scheduling
-./scripts/run-calendar.sh insert "Meeting title" 2024-03-15 14:00 60
+# Upload file with auto metadata
+gws drive +upload --file "./report.pdf" --name "Report"
 ```
 
-### Tasks Workflows
-
+### Raw API (Tasks - no helpers)
 ```bash
-# List tasks
-./scripts/run-tasks.sh list
-
-# Sync from triage
-./scripts/run-tasks.sh sync
-
-# Create task from email
-./scripts/run-tasks.sh from-email <message_id>
+# Tasks - use raw API directly
+gws tasks tasks list --params '{"tasklist":"@default","maxResults":100}'
+gws tasks tasks insert --params '{"tasklist":"@default"}' --json '{"title":"..."}'
 ```
+
+## AI-Driven Workflow
+
+### Triage Inbox
+
+**The AI does the work:**
+1. Call `gws gmail +triage --max 100 --format json`
+2. AI reads `shared/prioritization-rules.md` and `shared/email-categories.md`
+3. AI categorizes each email using its intelligence (not bash regex)
+4. AI decides what to archive based on rules
+5. AI archives by calling `gws gmail users messages modify`
+
+**NOT:**
+- ❌ Running bash scripts with 50+ regex patterns
+- ❌ Complex shell logic for categorization
+- ❌ Retry loops that create 54 log files
+
+### Schedule Calendar
+
+**The AI does the work:**
+1. Call `gws calendar +agenda --today --format json`
+2. AI reads `shared/calendar-preferences.md`
+3. AI identifies gaps and decides when to schedule
+4. AI creates events via `gws calendar +insert`
+
+## Label Reference (For AI Categorization)
+
+| Label ID | Name | Use For |
+|----------|------|---------|
+| Label_10 | Jobs | LinkedIn, job alerts, career |
+| Label_7 | Newsletters | Substack, digests, regular updates |
+| Label_11 | Promos | Marketing, offers, unsubscribe links |
+| Label_6 | Receipts | Orders, confirmations, invoices |
+| Label_18 | Social | Facebook, Twitter, Instagram, etc. |
+| Label_19 | Low-Priority | Everything else |
+
+Discover label IDs with: `gws gmail users labels list --params '{"userId":"me"}'`
+
+## Thin Script Wrappers
+
+Scripts are minimal wrappers around GWS-CLI. They do NOT embed intelligence.
+
+| Script | Purpose | Intelligence |
+|--------|---------|--------------|
+| `run-triage.sh` | Calls `+triage`, returns JSON | AI categorizes |
+| `run-calendar.sh` | Calls `+agenda`, returns JSON | AI schedules |
+| `run-tasks.sh` | Calls raw Tasks API | AI prioritizes |
 
 ## What to Load
 
 | Task | Load These | Do NOT Load |
 |------|-----------|-------------|
-| Triage inbox | `01-triage/CONTEXT.md`, `shared/prioritization-rules.md`, `shared/email-categories.md` | Other stages, extraction rules |
-| Extract knowledge | `02-extraction/CONTEXT.md`, `shared/extraction-rules.md`, `shared/para-structure.md` | Triage files, calendar files |
-| Sync calendar | `03-calendar/CONTEXT.md`, `shared/calendar-preferences.md` | Digest template, extraction rules |
-| Generate digest | `04-digest/CONTEXT.md`, `shared/digest-template.md` | All upstream stage CONTEXT files |
-
-## Stage Handoffs
-
-Each stage writes to its `output/` folder. The next stage reads from there:
-
-1. **Triage** → `triage-report.md` → read by Extraction and Calendar
-2. **Extraction** → `extraction-log.md` → read by Calendar and Digest
-3. **Calendar** → `calendar-log.md` → read by Digest
-4. **Digest** → `digest.md` → final output
+| Triage inbox | `shared/prioritization-rules.md`, `shared/email-categories.md` | Extraction rules, calendar files |
+| Extract knowledge | `02-extraction/CONTEXT.md`, `shared/extraction-rules.md` | Triage files, calendar files |
+| Sync calendar | `shared/calendar-preferences.md` | Digest template, extraction rules |
+| Generate digest | `04-digest/CONTEXT.md` | All upstream stage CONTEXT files |
 
 ## Trust-Based Autonomy
 

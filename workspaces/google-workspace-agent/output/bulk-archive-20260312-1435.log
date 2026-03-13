@@ -1,0 +1,18 @@
+[2026-03-12 14:35:27] [INFO] ==========================================
+[2026-03-12 14:35:27] [INFO] Bulk Archive - Gmail Inbox Cleanup
+[2026-03-12 14:35:27] [INFO] Version: 1.0.0
+[2026-03-12 14:35:27] [INFO] ==========================================
+[2026-03-12 14:35:27] [INFO] 
+[2026-03-12 14:35:27] [INFO] Cutoff: 7 days
+[2026-03-12 14:35:27] [INFO] Mode: DRY-RUN
+[2026-03-12 14:35:27] [INFO] 
+[2026-03-12 14:35:27] [INFO] Checking dependencies...
+[2026-03-12 14:35:27] [INFO] All dependencies satisfied.
+[2026-03-12 14:35:27] [INFO] Fetching inbox emails older than 7 days...
+[2026-03-12 14:35:27] [INFO] Cutoff date: 2026/03/05
+[2026-03-12 14:35:29] [INFO] Found 500 emails older than 7 days
+[2026-03-12 14:35:29] [ERROR] ==========================================
+[2026-03-12 14:35:29] [ERROR] AUTHENTICATION OR API ERROR
+[2026-03-12 14:35:29] [ERROR] ==========================================
+[2026-03-12 14:35:29] [ERROR] Context: Getting email headers for 19cbb18af1eecda0
+[2026-03-12 14:35:29] [ERROR] Please run: gws auth login

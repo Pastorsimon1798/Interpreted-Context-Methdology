@@ -1,0 +1,9 @@
+[2026-03-11 13:39:30] [INFO] ==========================================
+[2026-03-11 13:39:30] [INFO] Newsletter Processing Pipeline
+[2026-03-11 13:39:30] [INFO] ==========================================
+[2026-03-11 13:39:30] [INFO] Dry run: true
+[2026-03-11 13:39:30] [INFO] Max newsletters: 1
+[2026-03-11 13:39:30] [INFO] 
+[2026-03-11 13:39:30] [INFO] Checking dependencies...
+[2026-03-11 13:39:30] [SUCCESS] All dependencies satisfied
+[2026-03-11 13:39:30] [INFO] Fetching unread newsletters from Gmail...

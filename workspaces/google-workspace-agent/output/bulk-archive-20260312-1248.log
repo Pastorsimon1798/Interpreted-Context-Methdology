@@ -1,0 +1,77 @@
+[2026-03-12 12:48:47] [INFO] ==========================================
+[2026-03-12 12:48:47] [INFO] Bulk Archive - Gmail Inbox Cleanup
+[2026-03-12 12:48:47] [INFO] Version: 1.0.0
+[2026-03-12 12:48:47] [INFO] ==========================================
+[2026-03-12 12:48:47] [INFO] 
+[2026-03-12 12:48:47] [INFO] Cutoff: 7 days
+[2026-03-12 12:48:47] [INFO] Mode: DRY-RUN
+[2026-03-12 12:48:47] [INFO] 
+[2026-03-12 12:48:47] [INFO] Checking dependencies...
+[2026-03-12 12:48:47] [INFO] All dependencies satisfied.
+[2026-03-12 12:48:47] [INFO] Fetching inbox emails older than 7 days...
+[2026-03-12 12:48:47] [INFO] Cutoff date: 2026/03/05
+[2026-03-12 12:48:48] [INFO] Found 500 emails older than 7 days
+[2026-03-12 12:48:48] [DEBUG] Processing: 19cbb18af1eecda0
+[2026-03-12 12:48:49] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:49] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:49] [DEBUG] Processing: 19cbb12db9f5d1bf
+[2026-03-12 12:48:50] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:50] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:50] [DEBUG] Processing: 19cbb06bdf303042
+[2026-03-12 12:48:50] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:50] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:50] [DEBUG] Processing: 19cbad7db9cc70f3
+[2026-03-12 12:48:51] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:51] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:51] [DEBUG] Processing: 19cbaca32f984593
+[2026-03-12 12:48:52] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:52] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:52] [DEBUG] Processing: 19cbabfa84a7d382
+[2026-03-12 12:48:52] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:52] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:52] [DEBUG] Processing: 19cbab2019149bd1
+[2026-03-12 12:48:53] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:53] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:53] [DEBUG] Processing: 19cba9c05050d776
+[2026-03-12 12:48:53] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:53] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:53] [DEBUG] Processing: 19cba771620e5ef9
+[2026-03-12 12:48:54] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:54] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:54] [DEBUG] Processing: 19cba3ab3f9061d4
+[2026-03-12 12:48:54] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:54] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:54] [INFO] Progress: 10 emails processed...
+[2026-03-12 12:48:54] [DEBUG] Processing: 19cba0de1e934fe1
+[2026-03-12 12:48:55] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:55] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:55] [DEBUG] Processing: 19cba0b09aa0805a
+[2026-03-12 12:48:56] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:56] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:56] [DEBUG] Processing: 19cba01fdaed3a84
+[2026-03-12 12:48:58] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:58] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:58] [DEBUG] Processing: 19cb9fcf61534616
+[2026-03-12 12:48:59] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:59] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:59] [DEBUG] Processing: 19cb9f949042d671
+[2026-03-12 12:48:59] [DEBUG]   Category: low-priority
+[2026-03-12 12:48:59] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:48:59] [DEBUG] Processing: 19cb9a80af968cfa
+[2026-03-12 12:49:00] [DEBUG]   Category: low-priority
+[2026-03-12 12:49:00] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:49:00] [DEBUG] Processing: 19cb99ee10524899
+[2026-03-12 12:49:00] [DEBUG]   Category: low-priority
+[2026-03-12 12:49:00] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:49:00] [DEBUG] Processing: 19cb97c01f3eaab8
+[2026-03-12 12:49:01] [DEBUG]   Category: low-priority
+[2026-03-12 12:49:01] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:49:01] [DEBUG] Processing: 19cb97238e9ff304
+[2026-03-12 12:49:02] [DEBUG]   Category: low-priority
+[2026-03-12 12:49:02] [INFO] [DRY-RUN] Would archive:  (low-priority)
+[2026-03-12 12:49:02] [DEBUG] Processing: 19cb96a9e6bf1136
+[2026-03-12 12:50:02] [ERROR] ==========================================
+[2026-03-12 12:50:02] [ERROR] AUTHENTICATION OR API ERROR
+[2026-03-12 12:50:02] [ERROR] ==========================================
+[2026-03-12 12:50:02] [ERROR] Context: Getting email headers for 19cb96a9e6bf1136
+[2026-03-12 12:50:02] [ERROR] Please run: gws auth login

@@ -1,0 +1,37 @@
+[2026-03-11 17:10:23] [INFO] ==========================================
+[2026-03-11 17:10:23] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 17:10:23] [INFO] Version: 1.0.0
+[2026-03-11 17:10:23] [INFO] ==========================================
+[2026-03-11 17:10:23] [INFO] 
+[2026-03-11 17:10:23] [INFO] Checking dependencies...
+[2026-03-11 17:10:23] [INFO] All dependencies satisfied.
+[2026-03-11 17:10:23] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 17:10:23] [INFO] Configuration loaded successfully.
+[2026-03-11 17:10:23] [DEBUG] KNOWLEDGE_BASE_PATH: /Users/simongonzalezdecruz/knowledge-base
+[2026-03-11 17:10:23] [DEBUG] TRUST_LEVEL: supervised
+[2026-03-11 17:10:23] [INFO] Verifying gws authentication...
+[2026-03-11 17:10:24] [INFO] Authentication verified.
+[2026-03-11 17:10:24] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 17:10:26] [INFO] Successfully retrieved 50 emails
+[2026-03-11 17:10:26] [INFO] Processing and categorizing emails...
+[2026-03-11 17:10:59] [INFO] ==========================================
+[2026-03-11 17:10:59] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 17:10:59] [INFO] Version: 1.0.0
+[2026-03-11 17:10:59] [INFO] ==========================================
+[2026-03-11 17:10:59] [INFO] 
+[2026-03-11 17:10:59] [INFO] Checking dependencies...
+[2026-03-11 17:10:59] [INFO] All dependencies satisfied.
+[2026-03-11 17:10:59] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 17:10:59] [INFO] Configuration loaded successfully.
+[2026-03-11 17:10:59] [DEBUG] KNOWLEDGE_BASE_PATH: /Users/simongonzalezdecruz/knowledge-base
+[2026-03-11 17:10:59] [DEBUG] TRUST_LEVEL: supervised
+[2026-03-11 17:10:59] [INFO] Verifying gws authentication...
+[2026-03-11 17:10:59] [INFO] Authentication verified.
+[2026-03-11 17:10:59] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 17:11:01] [DEBUG] JSON preview: {
+  "messages": [
+    {
+      "date": "Wed, 11 Mar 2026 23:48:15 +0000 (UTC)",
+      "from": "Linked
+[2026-03-11 17:11:01] [INFO] Successfully retrieved 50 emails
+[2026-03-11 17:11:01] [INFO] Processing and categorizing emails...

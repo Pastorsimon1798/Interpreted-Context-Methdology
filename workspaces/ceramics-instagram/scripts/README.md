@@ -2,6 +2,38 @@
 
 Extract, analyze, and automate your Instagram content strategy.
 
+## 🚀 Auto-Post Automation (NEW)
+
+Fully automated posting: Take photos → add to album → done.
+
+```bash
+# One-time setup
+pip install -r requirements.txt
+playwright install chromium
+./setup-cron.sh
+
+# Your weekly workflow
+# 1. Add 3 photos to "To Post" album in Photos app (Sunday)
+# 2. Script runs Monday 6 AM automatically
+# 3. Posts scheduled for Mon 8AM, Tue 5PM, Fri 8AM
+
+# Test the workflow
+python auto-post.py --test
+
+# Check status
+python auto-post.py --status
+```
+
+**Result:** 3.5 hours/week → 2 minutes/week
+
+See `auto-post.py` for full documentation.
+
+---
+
+## Analysis Scripts
+
+Extract insights from your Instagram data.
+
 ## Quick Start
 
 ```bash
@@ -32,11 +64,21 @@ source venv/bin/activate
 
 | Script | Purpose | Frequency |
 |--------|---------|-----------|
+| `auto-post.py` | **Full automation: photos → captions → posts** | Monday 6 AM (cron) |
+| `setup-cron.sh` | Set up cron job | Once |
 | `extract-archive.py` | Full archive extraction | Once (or annually) |
 | `analyze-voice.py` | Voice pattern analysis | Monthly |
 | `analyze-hashtags.py` | Hashtag optimization | Monthly |
 | `analyze-performance.py` | Performance dashboard | Weekly |
 | `sync-weekly.py` | Incremental updates | Weekly |
+
+### Library Modules (`lib/`)
+
+| Module | Purpose |
+|--------|---------|
+| `photo_export.py` | AppleScript Photos app integration |
+| `caption_generator.py` | AI-powered caption generation |
+| `instagram_scheduler.py` | Playwright Meta Business Suite automation |
 
 ## Output Files
 

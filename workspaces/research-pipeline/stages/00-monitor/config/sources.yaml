@@ -1,0 +1,163 @@
+# Research Monitoring Sources
+# Updated: 2026-03-11
+# Uses GWS agent outputs as seeds for external discovery
+
+## HOW THIS WORKS
+# 1. GWS agent mines inbox → saves to ~/knowledge-base
+# 2. This monitor reads ~/knowledge-base → finds topics
+# 3. Uses those topics to discover NEW external sources
+# 4. Does NOT duplicate inbox mining (that's GWS agent's job)
+
+## SEED SOURCES (Read from GWS agent)
+# These are inputs, not sources to fetch
+seeds:
+  # Knowledge base structure reveals interests
+  knowledge_base:
+    path: "~/knowledge-base"
+    folders:
+      - name: "AI-Tools"
+        topics: ["AI agents", "LLMs", "automation", "tools"]
+      - name: "Coding"
+        topics: ["programming", "frameworks", "databases"]
+      - name: "Entrepreneurship"
+        topics: ["startups", "business", "funding"]
+      - name: "Neurodiversity"
+        topics: ["ADHD", "autism", "accessibility"]
+      - name: "Productivity"
+        topics: ["workflows", "systems", "PARA"]
+
+  # GWS agent's newsletter categorization
+  gws_output:
+    digest: "../google-workspace-agent/output/digest.md"
+    categories: "../google-workspace-agent/shared/email-categories.md"
+
+  # Current newsletter subscriptions (from digest)
+  subscribed_newsletters:
+    - "The Complexity Edge (substack)" → complexity, systems thinking
+    - "Nate's Substack" → AI prompts, prompt engineering
+    - "Slow AI" → AI criticism, alternatives
+    - "AgentMail" → AI agents for email
+    - "GenAI Works (LinkedIn)" → AI news, industry
+    - "Maven Analytics (LinkedIn)" → data, AI education
+
+## EXTERNAL DISCOVERY TARGETS
+# Based on seed topics, find SIMILAR/RELATED content
+external_search:
+
+  # Topics derived from your knowledge base + subscriptions
+  topics:
+    ai_agents:
+      keywords: ["multi-agent", "agent architecture", "LangGraph", "AutoGen", "CrewAI", "agent orchestration"]
+      related_to: ["AI-Tools folder", "AgentMail newsletter"]
+
+    llm_development:
+      keywords: ["prompt engineering", "RAG", "fine-tuning", "context windows", "token optimization"]
+      related_to: ["Nate's Substack", "Coding folder"]
+
+    production_ml:
+      keywords: ["ML systems", "deployment", "observability", "reliability", "production"]
+      related_to: ["Coding folder", "Entrepreneurship folder"]
+
+    ai_criticism:
+      keywords: ["AI safety", "alignment", "responsible AI", "AI ethics"]
+      related_to: ["Slow AI newsletter"]
+
+    neurodivergent_tech:
+      keywords: ["ADHD tools", "accessibility AI", "neurodivergent productivity"]
+      related_to: ["Neurodiversity folder"]
+
+    knowledge_management:
+      keywords: ["PARA", "PKM", "second brain", "obsidian", "notion AI"]
+      related_to: ["Productivity folder"]
+
+  # Where to discover NEW sources (not inbox)
+  discovery_channels:
+
+    # Academic - find papers related to topics
+    arxiv:
+      - query: "multi-agent LLM"
+        topic: ai_agents
+      - query: "RAG retrieval augmented generation"
+        topic: llm_development
+      - query: "agent evaluation benchmark"
+        topic: ai_agents
+
+    # GitHub - find new repos in topic areas
+    github:
+      topics: ["ai-agents", "langgraph", "llm-agents", "rag", "prompt-engineering"]
+      sort: "stars"
+      time: "weekly"
+
+    # Hacker News - high-signal discussions
+    hackernews:
+      min_score: 100
+      keywords: ["agent", "LLM", "RAG", "langgraph"]
+
+    # Reddit - community discoveries
+    reddit:
+      - "LocalLLaMA" → local models, edge deployment
+      - "AI_Agents" → agent development
+      - "MachineLearning" → research papers
+      - "ADHD" → neurodivergent productivity ( crossover)
+
+    # Hugging Face - trending in topic areas
+    huggingface:
+      - "text-generation" → new LLMs
+      - "agent-leaderboard" → agent benchmarks
+      - "papers" → daily research
+
+    # Twitter/X - thought leaders (manual check)
+    twitter:
+      researchers: ["@karpathy", "@ylecun", "@hwchase17"]
+      practitioners: ["@mattshumer_", "@alliekmiller"]
+
+## DEDICATED TRACKERS
+# High-signal individuals/orgs worth monitoring separately
+
+karpathy_tracker:
+  enabled: true
+  reference: "references/karpathy-tracker.md"
+  priority: "TIER_1"  # Always flag his releases
+  sources:
+    github:
+      user: "karpathy"
+      check: "daily"
+      trigger: "any new repo or major commit"
+    twitter:
+      handle: "@karpathy"
+      check: "daily"
+      trigger: "project announcements, release tweets"
+  current_focus:
+    - project: "autoresearch"
+      status: "active"
+      released: "2026-03-06"
+      notes: "AI agents running autonomous ML experiments - flagship 2026 project"
+    - project: "nanochat"
+      status: "active"
+      notes: "Minimal LLM training, parent of autoresearch"
+    - project: "llm.c"
+      status: "active"
+      notes: "LLM training in pure C/CUDA"
+  alert_rules:
+    - condition: "new repo created"
+      action: "immediate research + update tracker"
+    - condition: "stars > 10,000 in first week"
+      action: "priority digest inclusion"
+    - condition: "X announcement thread"
+      action: "research full context"
+
+## DISCOVERY OUTPUT
+# What the monitor produces for each run
+output:
+  new_sources:
+    - "Found new newsletter similar to [your subscription]"
+    - "Found new GitHub repo in [topic area]"
+    - "Found trending paper related to [seed topic]"
+
+  topic_expansion:
+    - "Your interest in [X] is trending - here's related [Y]"
+    - "New framework [Z] is gaining traction in [your topic area]"
+
+  gap_analysis:
+    - "You subscribe to [X] but not [similar Y] - worth exploring?"
+    - "Your [topic] folder is light on [subtopic] - found relevant content"

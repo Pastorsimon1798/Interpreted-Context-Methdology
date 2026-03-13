@@ -1,0 +1,91 @@
+[2026-03-12 15:51:16] [INFO] ==========================================
+[2026-03-12 15:51:16] [INFO] Bulk Archive - Gmail Inbox Cleanup
+[2026-03-12 15:51:16] [INFO] Version: 1.0.0
+[2026-03-12 15:51:16] [INFO] ==========================================
+[2026-03-12 15:51:16] [INFO] 
+[2026-03-12 15:51:16] [INFO] Cutoff: 7 days
+[2026-03-12 15:51:16] [INFO] Mode: DRY-RUN
+[2026-03-12 15:51:16] [INFO] 
+[2026-03-12 15:51:16] [INFO] Checking dependencies...
+[2026-03-12 15:51:16] [INFO] All dependencies satisfied.
+[2026-03-12 15:51:16] [INFO] Fetching inbox emails older than 7 days...
+[2026-03-12 15:51:16] [INFO] Cutoff date: 2026/03/05
+[2026-03-12 15:51:16] [INFO] Found 500 emails older than 7 days
+[2026-03-12 15:51:17] [INFO] Keeping in inbox: Reminder: Claude Code Windows Path Migration – Action Required by March 12 (action-required)
+[2026-03-12 15:51:18] [INFO] Keeping in inbox: Regarding your account: Fix potential security issues (valuable-promo)
+[2026-03-12 15:51:19] [INFO] Keeping in inbox: Regarding your account: Upgrade today (valuable-promo)
+[2026-03-12 15:51:20] [INFO] Reached maximum limit of 3 emails
+[2026-03-12 15:51:20] [INFO] Generating archive report...
+[2026-03-12 15:51:20] [INFO] Archive report saved to: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-report-20260312-1551.md
+[2026-03-12 15:51:20] [INFO] 
+[2026-03-12 15:51:20] [INFO] ==========================================
+[2026-03-12 15:51:20] [INFO] DRY-RUN COMPLETE
+[2026-03-12 15:51:20] [INFO] ==========================================
+[2026-03-12 15:51:20] [INFO] Would archive: 0 emails
+[2026-03-12 15:51:20] [INFO] Would keep: 3 emails
+[2026-03-12 15:51:20] [INFO] 
+[2026-03-12 15:51:20] [INFO] Run with --execute to actually archive these emails.
+[2026-03-12 15:51:20] [INFO] 
+[2026-03-12 15:51:20] [INFO] ==========================================
+[2026-03-12 15:51:20] [INFO] Summary
+[2026-03-12 15:51:20] [INFO] ==========================================
+[2026-03-12 15:51:20] [INFO] Processed: 3
+[2026-03-12 15:51:20] [INFO] Archived: 0
+[2026-03-12 15:51:20] [INFO] Kept: 3
+[2026-03-12 15:51:20] [INFO] Report: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-report-20260312-1551.md
+[2026-03-12 15:51:20] [INFO] Log: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-20260312-1551.log
+[2026-03-12 15:51:45] [INFO] ==========================================
+[2026-03-12 15:51:45] [INFO] Bulk Archive - Gmail Inbox Cleanup
+[2026-03-12 15:51:45] [INFO] Version: 1.0.0
+[2026-03-12 15:51:45] [INFO] ==========================================
+[2026-03-12 15:51:45] [INFO] 
+[2026-03-12 15:51:45] [INFO] Cutoff: 7 days
+[2026-03-12 15:51:45] [INFO] Mode: DRY-RUN
+[2026-03-12 15:51:45] [INFO] 
+[2026-03-12 15:51:45] [INFO] Checking dependencies...
+[2026-03-12 15:51:45] [INFO] All dependencies satisfied.
+[2026-03-12 15:51:45] [INFO] Fetching inbox emails older than 7 days...
+[2026-03-12 15:51:45] [INFO] Cutoff date: 2026/03/05
+[2026-03-12 15:51:46] [INFO] Found 500 emails older than 7 days
+[2026-03-12 15:51:46] [INFO] Keeping in inbox: Reminder: Claude Code Windows Path Migration – Action Required by March 12 (action-required)
+[2026-03-12 15:51:47] [INFO] Keeping in inbox: Regarding your account: Fix potential security issues (valuable-promo)
+[2026-03-12 15:51:48] [INFO] Keeping in inbox: Regarding your account: Upgrade today (valuable-promo)
+[2026-03-12 15:51:49] [INFO] Keeping in inbox: [GitHub] A third-party OAuth application has been added to your account (valuable-promo)
+[2026-03-12 15:51:51] [INFO] Keeping in inbox: Your appointment with Ann Irorere is confirmed (action-required)
+[2026-03-12 15:51:52] [INFO] Keeping in inbox: [Action Required] Migrate to Gemini 3.1 Pro Preview before March 9, 2026 (action-required)
+[2026-03-12 15:51:53] [INFO] Keeping in inbox: Uber One payment confirmation (action-required)
+[2026-03-12 15:51:54] [INFO] [DRY-RUN] Would archive: ✨ You have 3 new updates in Monarch (newsletter)
+[2026-03-12 15:51:55] [INFO] [DRY-RUN] Would archive: Martin Luther King, Jr. Community Hospital is hiring for Manager of Organizational Development and Employee Engagement. 8 more training specialist jobs in Compton, CA. (job-alert)
+[2026-03-12 15:51:56] [INFO] [DRY-RUN] Would archive: Right of Representation_ Simon Gonzales De Cruz_  AI Evangelist / copilot Specialist _ We spoke over the phone. (low-priority)
+[2026-03-12 15:51:56] [INFO] Progress: 10 emails processed...
+[2026-03-12 15:51:57] [INFO] [DRY-RUN] Would archive: Your Statement Is Now Ready (reference)
+[2026-03-12 15:51:59] [INFO] [DRY-RUN] Would archive: “data analyst”: Scale Media - Data Analyst and more (linkedin-notification)
+[2026-03-12 15:52:00] [INFO] [DRY-RUN] Would archive: Stop Hiding Your Best Ideas From the World (newsletter)
+[2026-03-12 15:52:01] [INFO] [DRY-RUN] Would archive: [GitHub] Your personal access token (classic) is about to expire (promotional)
+[2026-03-12 15:52:02] [INFO] [DRY-RUN] Would archive: Windy moors and hotel deals. 🌫️🥀👰🏼‍♀️ (low-priority)
+[2026-03-12 15:52:03] [INFO] [DRY-RUN] Would archive: “data analyst”: New York Technology Partners - Data Analyst and more (linkedin-notification)
+[2026-03-12 15:52:04] [INFO] [DRY-RUN] Would archive: Hey there, State of California is now accepting applications (job-alert)
+[2026-03-12 15:52:06] [INFO] [DRY-RUN] Would archive: Exciting updates for your app 😎 (newsletter)
+[2026-03-12 15:52:07] [INFO] [DRY-RUN] Would archive: BREAKING: Inside Opendoor (newsletter)
+[2026-03-12 15:52:08] [INFO] [DRY-RUN] Would archive: Machine Learning Engineer at Oxford Global Resources in Remote and 6 more new jobs (low-priority)
+[2026-03-12 15:52:08] [INFO] Progress: 20 emails processed...
+[2026-03-12 15:52:08] [INFO] Reached maximum limit of 20 emails
+[2026-03-12 15:52:08] [INFO] Generating archive report...
+[2026-03-12 15:52:09] [INFO] Archive report saved to: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-report-20260312-1551.md
+[2026-03-12 15:52:09] [INFO] 
+[2026-03-12 15:52:09] [INFO] ==========================================
+[2026-03-12 15:52:09] [INFO] DRY-RUN COMPLETE
+[2026-03-12 15:52:09] [INFO] ==========================================
+[2026-03-12 15:52:09] [INFO] Would archive: 13 emails
+[2026-03-12 15:52:09] [INFO] Would keep: 7 emails
+[2026-03-12 15:52:09] [INFO] 
+[2026-03-12 15:52:09] [INFO] Run with --execute to actually archive these emails.
+[2026-03-12 15:52:09] [INFO] 
+[2026-03-12 15:52:09] [INFO] ==========================================
+[2026-03-12 15:52:09] [INFO] Summary
+[2026-03-12 15:52:09] [INFO] ==========================================
+[2026-03-12 15:52:09] [INFO] Processed: 20
+[2026-03-12 15:52:09] [INFO] Archived: 13
+[2026-03-12 15:52:09] [INFO] Kept: 7
+[2026-03-12 15:52:09] [INFO] Report: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-report-20260312-1551.md
+[2026-03-12 15:52:09] [INFO] Log: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/bulk-archive-20260312-1551.log

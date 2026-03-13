@@ -2,53 +2,67 @@
 
 Read, categorize, and prioritize incoming emails for action and extraction.
 
+## Key Principle
+
+> **The AI does the categorization. Scripts just return JSON.**
+
 ## Inputs
 
-| Source | File/Location | Section/Scope | Why |
-|--------|--------------|---------------|-----|
-| Gmail API | `gws gmail messages list` | Unread/recent messages | Raw email data |
-| Gmail API | `gws gmail users.messages.watch` | Push configuration | Real-time notifications |
-| Shared | `shared/prioritization-rules.md` | Full file | Urgency/importance criteria |
-| Shared | `shared/email-categories.md` | Full file | User's taxonomy |
-| Skills | gws-gmail-triage, gws-workflow-email-to-task, gws-tasks, persona-exec-assistant, persona-project-manager | - | Processing capabilities |
-| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
-| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
+| Source | How to Access | Why |
+|--------|--------------|-----|
+| Gmail API | `gws gmail +triage --max 100 --format json` | Inbox summary for AI |
+| Gmail API | `gws gmail users messages get --params '{"userId":"me","id":"ID"}'` | Full email details |
+| Shared | `shared/prioritization-rules.md` | Urgency/importance criteria |
+| Shared | `shared/email-categories.md` | User's taxonomy |
 
 ## Process
 
-1. Set up push notifications via `gws gmail-watch`
-2. Fetch unread/recent emails via `gws gmail messages list`
-3. **[Security]** Sanitize email content using security-input-sanitization skill
-4. Categorize each email using email-categories.md taxonomy
-5. Score urgency using prioritization-rules.md
-6. Identify action-required items
-7. Convert action items to Google Tasks via `gws tasks`
-8. Flag emails with valuable content for extraction
-9. Generate triage-report.md
-10. [Checkpoint] If supervised = true, pause for user review
+1. **Fetch inbox** - Call `gws gmail +triage --max 100 --format json`
+2. **AI categorizes** - Use intelligence + `shared/email-categories.md` to classify each email
+3. **AI prioritizes** - Use `shared/prioritization-rules.md` to score urgency
+4. **AI decides actions** - What to archive, what to extract, what to create tasks for
+5. **AI archives** - Call `gws gmail users messages modify` to remove from inbox + apply label
+6. **Generate report** - Write `output/triage-report.md`
 
-## Verifiability
+## GWS Commands for AI
 
-**Classification:** `JUDGMENT-REQUIRED`
+```bash
+# Get inbox summary (id, subject, from, date)
+gws gmail +triage --max 100 --format json
 
-**Verification Method:** Email prioritization and categorization involve subjective judgment. Automated checks can verify completeness but not quality of decisions.
+# Get full email details when needed
+gws gmail users messages get --params '{"userId":"me","id":"MESSAGE_ID"}' --format json
 
-**Human Review Trigger:** High-priority categorizations and action item creation require human confirmation unless in autonomous mode.
+# Archive email with label
+gws gmail users messages modify \
+  --params '{"userId":"me","id":"MESSAGE_ID"}' \
+  --json '{"removeLabelIds":["INBOX"],"addLabelIds":["Label_7"]}'
 
-## Checkpoints
+# Discover label IDs
+gws gmail users labels list --params '{"userId":"me"}' --format json
+```
 
-| After Step | Agent Presents | Human Decides |
-|------------|---------------|---------------|
-| 9 | triage-report.md with categories, priorities, and action items | Approve categorization and task creation before proceeding |
+## Label Reference
 
-## Audit
+| Label ID | Name | Use For |
+|----------|------|---------|
+| Label_10 | Jobs | LinkedIn, job alerts, career |
+| Label_7 | Newsletters | Substack, digests, regular updates |
+| Label_11 | Promos | Marketing, offers, unsubscribe links |
+| Label_6 | Receipts | Orders, confirmations, invoices |
+| Label_18 | Social | Facebook, Twitter, Instagram, etc. |
+| Label_19 | Low-Priority | Everything else |
 
-| Check | Pass Condition |
-|-------|---------------|
-| All emails categorized | Every processed email has a category assigned |
-| Action items identified | All action-required emails have corresponding tasks |
-| No auto-replies sent | No email responses were sent without explicit approval |
-| Content sanitized | All email bodies passed security validation |
+## AI Categorization Logic
+
+The AI uses its intelligence to categorize emails. Example patterns:
+
+- **Jobs**: Contains "job alert", "career", "recruiter", from LinkedIn Jobs
+- **Newsletters**: Contains "unsubscribe", regular sender, digest format
+- **Promos**: Marketing language, "offer", "sale", promotional sender
+- **Social**: From social media platforms, notification-style emails
+- **Action-Required**: "please review", "action needed", "deadline", personal request
+- **Reference**: Receipts, confirmations, bookings
 
 ## Outputs
 
@@ -56,3 +70,11 @@ Read, categorize, and prioritize incoming emails for action and extraction.
 |----------|----------|--------|
 | Triage Report | `output/triage-report.md` | Categorized email list with priorities and action items |
 | Google Tasks | Tasks API | Created action items from email processing |
+
+## Verifiability
+
+**Classification:** `JUDGMENT-REQUIRED`
+
+**Verification Method:** Email prioritization and categorization involve subjective judgment. The AI makes decisions based on rules and context.
+
+**Human Review Trigger:** High-priority categorizations and action item creation require human confirmation unless in autonomous mode.

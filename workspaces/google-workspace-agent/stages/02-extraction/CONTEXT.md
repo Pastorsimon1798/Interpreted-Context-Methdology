@@ -2,91 +2,81 @@
 
 Extract valuable information from newsletters and reference emails for the knowledge base.
 
+## Key Principle
+
+> **The AI does the extraction. Scripts just save the files.**
+
 ## Inputs
 
-| Source | File/Location | Section/Scope | Why |
-|--------|--------------|---------------|-----|
-| Stage 01 | `../01-triage/output/triage-report.md` | "Valuable Content" section | Flagged emails for extraction |
-| Shared | `shared/extraction-rules.md` | Full file | What counts as valuable info |
-| Shared | `shared/para-structure.md` | Full file | PARA folder definitions |
-| Config | `shared/drive-ids.sh` | - | Google Drive folder IDs |
-| Config | Google Drive | Knowledge Base folder | Native Drive storage |
-| Skills | gws-drive, gws-keep, recipe-save-email-attachments, persona-researcher | - | Processing capabilities |
-| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
-| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
+| Source | How to Access | Why |
+|--------|--------------|-----|
+| Stage 01 | `../01-triage/output/triage-report.md` | Flagged emails for extraction |
+| Gmail API | `gws gmail users messages get --params '{"userId":"me","id":"ID"}'` | Full email content |
+| Shared | `shared/extraction-rules.md` | What counts as valuable info |
+| Shared | `shared/para-structure.md` | PARA folder definitions |
 
-## Task Integration
-
-Action items extracted during this stage can be synced to Google Tasks:
+## GWS Commands for AI
 
 ```bash
-# Sync action items from triage to Tasks
-./scripts/run-tasks.sh sync
+# Get full email content
+gws gmail users messages get --params '{"userId":"me","id":"MESSAGE_ID"}' --format json
 
-# Create task from specific email
-./scripts/run-tasks.sh from-email <message_id>
+# Upload to Drive (AI decides PARA category)
+gws drive +upload --file "./extracted.md" --name "Newsletter Summary"
 
-# Or use the workflow helper
-./shared/gws-workflows.sh email-to-task <message_id>
+# Create Google Doc
+gws drive files create --json '{"name":"Title","mimeType":"application/vnd.google-apps.document","parents":["FOLDER_ID"]}'
 ```
 
 ## Process
 
-1. Read flagged emails from triage report
-2. Extract attachments using recipe-save-email-attachments
-3. **[Security]** Sanitize content before saving to knowledge base
-4. Extract valuable information per extraction-rules.md
-5. Classify each extraction into PARA category
-6. Create Google Doc using `scripts/kb-create.sh` in appropriate PARA folder
-7. Capture fleeting notes to Google Keep
-8. Link each extraction back to source email (message ID)
-9. Apply Gmail label (KB/Projects, KB/Areas, KB/Resources, KB/Archive) to source email
-10. [Checkpoint] If supervised = true, pause for user review
-11. Sync action items to Google Tasks
+1. **Read triage report** - Identify emails flagged for extraction
+2. **Fetch full email** - Call `gws gmail users messages get`
+3. **AI extracts content** - Use `shared/extraction-rules.md` to identify valuable info
+4. **AI classifies to PARA** - Projects, Areas, Resources, or Archive
+5. **AI saves to Drive** - Call `gws drive +upload` or create doc
+6. **Generate log** - Write `output/extraction-log.md`
+
+## AI Extraction Logic
+
+The AI uses its intelligence to extract. Example patterns:
+
+- **Links**: URLs with context, resources, references
+- **Key insights**: Summaries, takeaways, lessons
+- **Deadlines**: Dates, due dates, reminders
+- **Contacts**: People, organizations, roles
+- **Action items**: Tasks, to-dos, follow-ups
+
+## PARA Classification
+
+The AI decides where to save based on content:
+
+| Category | Folder | Use For |
+|----------|--------|---------|
+| Projects | `01-Projects/` | Active work with deadline |
+| Areas | `02-Areas/` | Ongoing responsibilities |
+| Resources | `03-Resources/` | Reference material |
+| Archive | `04-Archive/` | Completed/inactive items |
+
+## Drive Helper
+
+```bash
+# Upload file (AI provides content)
+./scripts/kb-create.sh <category> <title> [content]
+
+# Or use GWS directly
+gws drive +upload --file "./content.md" --name "Newsletter - 2026-03-12"
+```
+
+## Outputs
+
+| Artifact | Location | Format |
+|----------|----------|--------|
+| PARA Docs | Google Drive | Google Docs in PARA folders |
+| Extraction Log | `output/extraction-log.md` | List of extractions with source email IDs |
 
 ## Verifiability
 
 **Classification:** `MACHINE-VERIFIABLE`
 
 **Verification Method:** Extractions can be counted, PARA categories can be validated, source links can be verified.
-
-**Human Review Trigger:** Only in supervised mode. Auto-proceed in partial/autonomous mode if audit passes.
-
-## Checkpoints
-
-| After Step | Agent Presents | Human Decides |
-|------------|---------------|---------------|
-| 8 | extraction-log.md with PARA classifications and file locations | Approve extractions and categorizations before proceeding |
-
-## Audit
-
-| Check | Pass Condition |
-|-------|---------------|
-| All extractions linked | Each extraction references source email message ID |
-| PARA category assigned | Every extracted file has a PARA category |
-| No duplication | No duplicate content across extractions |
-| Content sanitized | All extracted content passed security validation |
-
-## Outputs
-
-| Artifact | Location | Format |
-|----------|----------|--------|
-| PARA Docs | Google Drive `{00-Inbox,01-Projects,02-Areas,03-Resources,04-Archive}` | Google Docs |
-| Attachments | Google Drive `_System/attachments/` | Uploaded files |
-| Master Index | Google Sheets `Master Index` | Central registry of all KB items |
-| Extraction Log | `output/extraction-log.md` | List of created files with source email IDs |
-| Tasks | Google Tasks | Action items synced from triage |
-
-## Drive Integration
-
-Use `scripts/kb-create.sh` to create new knowledge base documents:
-
-```bash
-./scripts/kb-create.sh <category> <title> [content]
-# Categories: inbox, project, area, resource, archive
-```
-
-This creates:
-1. A Google Doc in the appropriate PARA folder
-2. An entry in the Master Index spreadsheet
-3. Returns the Doc URL and KB ID

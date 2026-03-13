@@ -2,6 +2,17 @@
 
 Format synthesized knowledge into final deliverable with proper file outputs.
 
+## Documentation Navigation
+
+When reading ICM's own documentation, use jDocMunch instead of Read:
+
+```
+search_sections(repo="local/Interpreted-Context-Methdology", query="...")
+get_section(section_id="...")
+```
+
+**Never read entire CLAUDE.md or CONTEXT.md files - retrieve only needed sections.**
+
 ## Inputs
 
 | Source | File/Location | Section/Scope | Why |

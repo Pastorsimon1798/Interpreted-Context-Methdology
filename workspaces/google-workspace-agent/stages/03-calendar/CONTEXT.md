@@ -2,61 +2,77 @@
 
 Create and manage calendar events based on action items and extracted dates.
 
+## Key Principle
+
+> **The AI does the scheduling. Scripts just return JSON.**
+
 ## Inputs
 
-| Source | File/Location | Section/Scope | Why |
-|--------|--------------|---------------|-----|
-| Stage 01 | `../01-triage/output/triage-report.md` | "Action Items" section | Action items with deadlines |
-| Stage 02 | `../02-extraction/output/extraction-log.md` | Dates/deadlines | Extracted temporal data |
-| Shared | `shared/calendar-preferences.md` | Full file | Durations, working hours |
-| Config | `c_8794edb43185139c1476becd055c18da00b15120720f6754ce8e6f7e7598d6d8@group.calendar.google.com` | - | Target calendar (Life/EF) |
-| Skills | gws-calendar, gws-calendar-insert, recipe-block-focus-time, persona-project-manager | - | Processing capabilities |
+| Source | How to Access | Why |
+|--------|--------------|-----|
+| Stage 01 | `../01-triage/output/triage-report.md` | Action items with deadlines |
+| Stage 02 | `../02-extraction/output/extraction-log.md` | Extracted temporal data |
+| Shared | `shared/calendar-preferences.md` | Durations, working hours |
+| Calendar | `gws calendar +agenda --today --format json` | Today's schedule |
 
-## Commands
+## GWS Commands for AI
 
-| Command | Description |
-|---------|-------------|
-| `agenda [date]` | Show daily agenda with all events |
-| `insert <summary> [date] [time] [duration]` | Create event with smart scheduling |
-| `freebusy [date]` | Check free/busy times |
-| (default) | Run full calendar sync |
+```bash
+# Get today's agenda
+gws calendar +agenda --today --format json
+
+# Get this week's agenda
+gws calendar +agenda --week --format json
+
+# Create event (AI decides when)
+gws calendar +insert --summary "Meeting Title" --start "2026-03-12T14:00:00"
+
+# Create event with full options
+gws calendar events insert \
+  --calendar "primary" \
+  --json '{"summary":"Meeting","start":{"dateTime":"2026-03-12T14:00:00","timeZone":"America/New_York"},"end":{"dateTime":"2026-03-12T15:00:00","timeZone":"America/New_York"}}'
+
+# Check free/busy
+gws calendar freebusy \
+  --json '{"items":[{"id":"primary"}],"timeMin":"2026-03-12T00:00:00Z","timeMax":"2026-03-12T23:59:59Z"}'
+```
 
 ## Process
 
-1. Collect action items with deadlines from triage report
-2. Collect dates/deadlines from extraction log
-3. Check for conflicts via `gws calendar events list`
-4. Draft proposed events with context links
-5. Apply preferences from calendar-preferences.md
-6. Block focus time using recipe-block-focus-time (ADHD-friendly)
-7. [Checkpoint] If supervised = true, pause for user review
-8. Create events via `gws calendar events insert`
+1. **Fetch schedule** - Call `gws calendar +agenda --today --format json`
+2. **AI reads preferences** - `shared/calendar-preferences.md` for working hours, buffer times
+3. **AI analyzes** - Identify gaps, conflicts, optimal focus times
+4. **AI decides** - When to schedule events, how long, when to block focus time
+5. **AI creates events** - Call `gws calendar +insert` or `gws calendar events insert`
+6. **Generate log** - Write `output/calendar-log.md`
+
+## AI Scheduling Logic
+
+The AI uses its intelligence to schedule. Example decisions:
+
+- **Focus blocks**: Morning (9-11am) or afternoon (2-4pm) based on preferences
+- **Meeting buffers**: 5-15 min between meetings (configurable)
+- **Working hours**: Respect start/end times from preferences
+- **Conflict resolution**: Reschedule or find alternative slots
+
+## Commands (Thin Wrappers)
+
+| Command | GWS Call | AI Decision |
+|---------|----------|-------------|
+| `agenda [date]` | `gws calendar +agenda` | None - returns JSON |
+| `insert <summary> ...` | `gws calendar +insert` | AI decides time |
+| `freebusy [date]` | `gws calendar freebusy` | None - returns JSON |
+
+## Outputs
+
+| Artifact | Location | Format |
+|----------|----------|--------|
+| Calendar Events | Google Calendar | Events with context links |
+| Focus Blocks | Google Calendar | Blocked focus time |
+| Calendar Log | `output/calendar-log.md` | List of created events |
 
 ## Verifiability
 
 **Classification:** `MACHINE-VERIFIABLE`
 
 **Verification Method:** Events created can be verified via Calendar API, conflicts can be detected programmatically.
-
-**Human Review Trigger:** Only in supervised mode. Auto-proceed in partial/autonomous mode if no conflicts detected.
-
-## Checkpoints
-
-| After Step | Agent Presents | Human Decides |
-|------------|---------------|---------------|
-| 7 | Draft events with focus blocks and conflict resolution | Approve calendar changes before creation |
-
-## Audit
-
-| Check | Pass Condition |
-|-------|---------------|
-| All events have context links | Each event links to source triage item or extraction |
-| No conflicts | No new events overlap with existing calendar events |
-
-## Outputs
-
-| Artifact | Location | Format |
-|----------|----------|--------|
-| Calendar Events | `c_8794edb43185139c1476becd055c18da00b15120720f6754ce8e6f7e7598d6d8@group.calendar.google.com` | Events with context links |
-| Focus Blocks | `c_8794edb43185139c1476becd055c18da00b15120720f6754ce8e6f7e7598d6d8@group.calendar.google.com` | Blocked focus time |
-| Calendar Log | `output/calendar-log.md` | List of created events with IDs |

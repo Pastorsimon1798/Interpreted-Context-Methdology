@@ -2,61 +2,60 @@
 
 Present a consolidated summary of all agent activity.
 
+## Key Principle
+
+> **The AI reads outputs and writes the digest. Scripts just help deliver it.**
+
 ## Inputs
 
-| Source | File/Location | Section/Scope | Why |
-|--------|--------------|---------------|-----|
-| Stage 01 | `../01-triage/output/triage-report.md` | Full file | Triage summary |
-| Stage 02 | `../02-extraction/output/extraction-log.md` | Full file | Extraction summary |
-| Stage 03 | `../03-calendar/output/calendar-log.md` | Full file | Calendar summary |
-| Shared | `shared/digest-template.md` | Full file | ADHD-friendly formatting |
-| Config | `twice-daily` | - | Digest frequency |
-| Skills | gws-calendar-agenda, gws-workflow-weekly-digest | - | Processing capabilities |
-| Security | `../../shared/security/CONTEXT.md` | Full file | Sanitization rules |
-| Skill | `../../skills/security-input-sanitization/SKILL.md` | Full file | Injection protection |
+| Source | How to Access | Why |
+|--------|--------------|-----|
+| Stage 01 | `../01-triage/output/triage-report.md` | Triage summary |
+| Stage 02 | `../02-extraction/output/extraction-log.md` | Extraction summary |
+| Stage 03 | `../03-calendar/output/calendar-log.md` | Calendar summary |
+| Shared | `shared/digest-template.md` | ADHD-friendly formatting |
 
-## Commands
+## GWS Commands for AI
 
-| Command | Description |
-|---------|-------------|
-| (default) | Generate digest |
-| `--email` | Generate and send via Gmail |
-| `--slack` | Send notification via Slack |
-| `send <to> <subject> [body]` | Send email via Gmail +send |
-| `reply <msg_id> [body]` | Reply to email via Gmail +reply |
+```bash
+# Send digest via email (AI composes, +send delivers)
+gws gmail +send --to "user@example.com" --subject "Daily Digest" --body "..."
+
+# Reply to a thread (AI composes reply)
+gws gmail +reply --message-id "..." --body "..."
+```
 
 ## Process
 
-1. Aggregate statistics from all upstream outputs
-2. Summarize triage: emails processed, categories, urgent items, tasks created
-3. Summarize extractions: new knowledge files, PARA distribution, attachments saved
-4. Summarize calendar: events created, focus blocks, upcoming deadlines
-5. **[Security]** Sanitize any email snippets before including in digest
-6. Format using ADHD-friendly template
-7. Write digest to output
-8. (Optional) Deliver via email or Slack
+1. **AI reads stage outputs** - Triage, extraction, calendar logs
+2. **AI aggregates** - Statistics, counts, key items
+3. **AI summarizes** - ADHD-friendly format with bullets, clear sections
+4. **AI writes digest** - `output/digest.md`
+5. **AI delivers** (optional) - Call `gws gmail +send`
 
-## Verifiability
+## AI Summary Logic
 
-**Classification:** `JUDGMENT-REQUIRED`
+The AI creates a scannable digest:
 
-**Verification Method:** Digest completeness can be checked, but quality of summary and ADHD-friendly formatting requires human judgment.
+- **ACTION REQUIRED**: Critical items first (max 5)
+- **HIGH PRIORITY**: Important but not urgent (max 10)
+- **INBOX SUMMARY**: Stats and categories
+- **EXTRACTED**: New knowledge base items
+- **CALENDAR**: Today's schedule, focus time
+- **METRICS**: Quick counts
 
-**Human Review Trigger:** Always present digest for review before sending/displaying (unless autonomous mode).
+## Delivery Commands
 
-## Checkpoints
+```bash
+# Generate digest only
+./scripts/run-digest.sh
 
-| After Step | Agent Presents | Human Decides |
-|------------|---------------|---------------|
-| 6 (Write digest) | digest.md with summary of all activity | Approve before sending/displaying |
+# Generate and send via email
+./scripts/run-digest.sh --email
 
-## Audit
-
-| Check | Pass Condition |
-|-------|---------------|
-| All action items accounted | Every action item from triage appears in digest |
-| Digest scannable | Content uses ADHD-friendly formatting (bullet points, clear sections, visual hierarchy) |
-| Content sanitized | All email snippets passed security validation |
+# Send custom email (AI composes)
+gws gmail +send --to "user@example.com" --subject "Subject" --body "AI-written content"
+```
 
 ## Outputs
 
@@ -64,3 +63,9 @@ Present a consolidated summary of all agent activity.
 |----------|----------|--------|
 | Digest | `output/digest.md` | Consolidated activity summary |
 | Email | Inbox | (Optional) Delivered via Gmail +send |
+
+## Verifiability
+
+**Classification:** `JUDGMENT-REQUIRED`
+
+**Verification Method:** Digest completeness can be checked, but quality of summary requires human judgment.

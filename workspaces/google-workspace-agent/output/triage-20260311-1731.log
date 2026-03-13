@@ -1,0 +1,96 @@
+[2026-03-11 17:31:21] [INFO] ==========================================
+[2026-03-11 17:31:21] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 17:31:21] [INFO] Version: 1.0.0
+[2026-03-11 17:31:21] [INFO] ==========================================
+[2026-03-11 17:31:21] [INFO] 
+[2026-03-11 17:31:21] [INFO] Checking dependencies...
+[2026-03-11 17:31:21] [INFO] All dependencies satisfied.
+[2026-03-11 17:31:21] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 17:31:21] [INFO] Configuration loaded successfully.
+[2026-03-11 17:31:21] [INFO] Verifying gws authentication...
+[2026-03-11 17:31:22] [INFO] Authentication verified.
+[2026-03-11 17:31:22] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 17:31:24] [INFO] Successfully retrieved 50 emails
+[2026-03-11 17:31:24] [INFO] Processing and categorizing emails...
+[2026-03-11 17:31:24] [INFO] Archiving email 19cdf7021639f164: promotional
+[2026-03-11 17:31:25] [INFO] Successfully archived 19cdf7021639f164
+[2026-03-11 17:31:26] [INFO] Archiving email 19cdf468d94abc7e: linkedin-notification
+[2026-03-11 17:31:26] [INFO] Successfully archived 19cdf468d94abc7e
+[2026-03-11 17:31:27] [INFO] Archiving email 19cdf4d2e84ab38f: linkedin-notification
+[2026-03-11 17:31:27] [INFO] Successfully archived 19cdf4d2e84ab38f
+[2026-03-11 17:31:28] [INFO] Archiving email 19cdf01768f8d8ea: low-priority
+[2026-03-11 17:31:28] [INFO] Successfully archived 19cdf01768f8d8ea
+[2026-03-11 17:31:29] [INFO] Archiving email 19cdf63f8231f2fa: low-priority
+[2026-03-11 17:31:30] [INFO] Successfully archived 19cdf63f8231f2fa
+[2026-03-11 17:31:31] [INFO] Archiving email 19cde98c8eefd5a4: low-priority
+[2026-03-11 17:31:32] [INFO] Successfully archived 19cde98c8eefd5a4
+[2026-03-11 17:31:32] [INFO] Archiving email 19cded8f645fa221: linkedin-notification
+[2026-03-11 17:31:33] [INFO] Successfully archived 19cded8f645fa221
+[2026-03-11 17:31:33] [INFO] Archiving email 19cde95db58199f2: low-priority
+[2026-03-11 17:31:34] [INFO] Successfully archived 19cde95db58199f2
+[2026-03-11 17:31:35] [INFO] Archiving email 19cde9635c281075: low-priority
+[2026-03-11 17:31:35] [INFO] Successfully archived 19cde9635c281075
+[2026-03-11 17:31:36] [INFO] Archiving email 19cde97b3dabad20: low-priority
+[2026-03-11 17:31:37] [INFO] Successfully archived 19cde97b3dabad20
+[2026-03-11 17:31:38] [INFO] Archiving email 19cde47f372ec60a: low-priority
+[2026-03-11 17:31:39] [INFO] Successfully archived 19cde47f372ec60a
+[2026-03-11 17:31:40] [INFO] Archiving email 19cde148c76de0bd: low-priority
+[2026-03-11 17:31:40] [INFO] Successfully archived 19cde148c76de0bd
+[2026-03-11 17:31:41] [INFO] Archiving email 19cde92c502969c4: low-priority
+[2026-03-11 17:31:41] [INFO] Successfully archived 19cde92c502969c4
+[2026-03-11 17:31:42] [INFO] Archiving email 19cde94e6c383520: low-priority
+[2026-03-11 17:31:43] [INFO] Successfully archived 19cde94e6c383520
+[2026-03-11 17:31:44] [INFO] Archiving email 19cddd95fff9de90: promotional
+[2026-03-11 17:31:45] [INFO] Successfully archived 19cddd95fff9de90
+[2026-03-11 17:31:45] [INFO] Archiving email 19cddb77ea8f7a65: linkedin-notification
+[2026-03-11 17:31:46] [INFO] Successfully archived 19cddb77ea8f7a65
+[2026-03-11 17:31:46] [INFO] Archiving email 19cddd27e67d919e: low-priority
+[2026-03-11 17:31:47] [INFO] Successfully archived 19cddd27e67d919e
+[2026-03-11 17:31:47] [INFO] Archiving email 19cddbc88e544720: low-priority
+[2026-03-11 17:31:48] [INFO] Successfully archived 19cddbc88e544720
+[2026-03-11 17:31:49] [INFO] Archiving email 19cddaa46e6e25e0: low-priority
+[2026-03-11 17:31:49] [INFO] Successfully archived 19cddaa46e6e25e0
+[2026-03-11 17:31:50] [INFO] Archiving email 19cdd7ae7a39cef6: linkedin-notification
+[2026-03-11 17:31:50] [INFO] Successfully archived 19cdd7ae7a39cef6
+[2026-03-11 17:31:51] [INFO] Archiving email 19cdd95fd2d5ade9: linkedin-notification
+[2026-03-11 17:31:51] [INFO] Successfully archived 19cdd95fd2d5ade9
+[2026-03-11 17:31:52] [INFO] Archiving email 19cddfc2f897c61a: linkedin-notification
+[2026-03-11 17:31:52] [INFO] Successfully archived 19cddfc2f897c61a
+[2026-03-11 17:31:54] [INFO] Archiving email 19cdd5038f36c52b: promotional
+[2026-03-11 17:31:55] [INFO] Successfully archived 19cdd5038f36c52b
+[2026-03-11 17:31:57] [INFO] Archiving email 19cdd2c30c9599f0: low-priority
+[2026-03-11 17:31:57] [INFO] Successfully archived 19cdd2c30c9599f0
+[2026-03-11 17:31:58] [INFO] Archiving email 19cdd21cedb44e6c: linkedin-notification
+[2026-03-11 17:31:59] [INFO] Successfully archived 19cdd21cedb44e6c
+[2026-03-11 17:32:00] [INFO] Archiving email 19cdd18a225ab593: low-priority
+[2026-03-11 17:32:00] [INFO] Successfully archived 19cdd18a225ab593
+[2026-03-11 17:32:01] [INFO] Archiving email 19cdcf5ceed0c8bc: promotional
+[2026-03-11 17:32:01] [INFO] Successfully archived 19cdcf5ceed0c8bc
+[2026-03-11 17:32:02] [INFO] Archiving email 19cdce53c673dd4c: low-priority
+[2026-03-11 17:32:02] [INFO] Successfully archived 19cdce53c673dd4c
+[2026-03-11 17:32:03] [INFO] Archiving email 19cdceb6396649ed: low-priority
+[2026-03-11 17:32:04] [INFO] Successfully archived 19cdceb6396649ed
+[2026-03-11 17:32:05] [INFO] Archiving email 19cdce2eec19a4a2: low-priority
+[2026-03-11 17:32:05] [INFO] Successfully archived 19cdce2eec19a4a2
+[2026-03-11 17:32:06] [INFO] Archiving email 19cdcb2a798bc58a: linkedin-notification
+[2026-03-11 17:32:06] [INFO] Successfully archived 19cdcb2a798bc58a
+[2026-03-11 17:32:07] [INFO] Archiving email 19cdc9ac00cb34ed: low-priority
+[2026-03-11 17:32:07] [INFO] Successfully archived 19cdc9ac00cb34ed
+[2026-03-11 17:32:08] [INFO] Archiving email 19cdc44e9d028c77: linkedin-notification
+[2026-03-11 17:32:09] [INFO] Successfully archived 19cdc44e9d028c77
+[2026-03-11 17:32:10] [INFO] Archiving email 19cdc44e03cac724: low-priority
+[2026-03-11 17:32:11] [INFO] Successfully archived 19cdc44e03cac724
+[2026-03-11 17:32:11] [INFO] Processed 50 emails
+[2026-03-11 17:32:11] [INFO] Generating triage report...
+[2026-03-11 17:32:11] [INFO] Triage report saved to: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/triage-report-20260311-1731.md
+[2026-03-11 17:32:11] [INFO] Generating extraction candidates...
+[2026-03-11 17:32:11] [INFO] Extraction candidates saved to: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/extraction-candidates.json
+[2026-03-11 17:32:11] [INFO] Found 1 candidates for extraction.
+[2026-03-11 17:32:11] [INFO] 
+[2026-03-11 17:32:11] [INFO] ==========================================
+[2026-03-11 17:32:11] [INFO] Triage Complete
+[2026-03-11 17:32:11] [INFO] ==========================================
+[2026-03-11 17:32:11] [INFO] Total: 50 | Urgent: 0 | Action: 0 | Archived: 34
+[2026-03-11 17:32:11] [INFO] Report: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/triage-report-20260311-1731.md
+[2026-03-11 17:32:11] [INFO] Candidates: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/extraction-candidates.json
+[2026-03-11 17:32:11] [INFO] Log: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/triage-20260311-1731.log

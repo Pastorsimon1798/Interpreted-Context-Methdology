@@ -1,0 +1,43 @@
+[2026-03-11 18:30:36] [INFO] ==========================================
+[2026-03-11 18:30:36] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 18:30:36] [INFO] Version: 1.0.0
+[2026-03-11 18:30:36] [INFO] ==========================================
+[2026-03-11 18:30:36] [INFO] 
+[2026-03-11 18:30:36] [INFO] Checking dependencies...
+[2026-03-11 18:30:36] [INFO] All dependencies satisfied.
+[2026-03-11 18:30:36] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 18:30:36] [INFO] Configuration loaded successfully.
+[2026-03-11 18:30:36] [DEBUG] KNOWLEDGE_BASE_PATH: /Users/simongonzalezdecruz/knowledge-base
+[2026-03-11 18:30:36] [DEBUG] TRUST_LEVEL: supervised
+[2026-03-11 18:30:36] [INFO] Verifying gws authentication...
+[2026-03-11 18:30:37] [INFO] Authentication verified.
+[2026-03-11 18:30:37] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 18:30:38] [DEBUG] JSON preview: {
+  "messages": [
+    {
+      "date": "Thu, 12 Mar 2026 00:26:30 +0000",
+      "from": "\"Academic A
+[2026-03-11 18:30:38] [INFO] Successfully retrieved 10 emails
+[2026-03-11 18:30:38] [INFO] Processing and categorizing emails...
+[2026-03-11 18:30:38] [DEBUG] Processing message: 19cdf7021639f164
+[2026-03-11 18:30:39] [INFO] Archiving 19cdf7021639f164 (promotional) with label Label_11
+[2026-03-11 18:30:40] [INFO] Successfully archived 19cdf7021639f164
+[2026-03-11 18:30:40] [DEBUG] Processing message: 19cdf63f8231f2fa
+[2026-03-11 18:30:40] [INFO] Archiving 19cdf63f8231f2fa (low-priority)
+[2026-03-11 18:30:41] [INFO] Successfully archived 19cdf63f8231f2fa
+[2026-03-11 18:30:41] [DEBUG] Processing message: 19cdf4d2e84ab38f
+[2026-03-11 18:30:42] [INFO] Archiving 19cdf4d2e84ab38f (linkedin-notification) with label Label_10
+[2026-03-11 18:30:43] [INFO] Successfully archived 19cdf4d2e84ab38f
+[2026-03-11 18:30:43] [DEBUG] Processing message: 19cdeff96da50d4e
+[2026-03-11 18:30:44] [INFO] Archiving 19cdeff96da50d4e (job-alert) with label Label_10
+[2026-03-11 18:30:45] [INFO] Successfully archived 19cdeff96da50d4e
+[2026-03-11 18:30:45] [DEBUG] Processing message: 19cded8f645fa221
+[2026-03-11 18:30:45] [INFO] Archiving 19cded8f645fa221 (linkedin-notification) with label Label_10
+[2026-03-11 18:30:46] [INFO] Successfully archived 19cded8f645fa221
+[2026-03-11 18:30:46] [DEBUG] Processing message: 19cdecae4bc82f9e
+[2026-03-11 18:30:47] [INFO] Archiving 19cdecae4bc82f9e (linkedin-job) with label Label_10
+[2026-03-11 18:30:48] [INFO] Successfully archived 19cdecae4bc82f9e
+[2026-03-11 18:30:48] [DEBUG] Processing message: 19cdf149e15b022b
+[2026-03-11 18:30:48] [INFO] Archiving 19cdf149e15b022b (job-alert) with label Label_10
+[2026-03-11 18:30:49] [INFO] Successfully archived 19cdf149e15b022b
+[2026-03-11 18:30:49] [DEBUG] Processing message: 19cdf01768f8d8ea

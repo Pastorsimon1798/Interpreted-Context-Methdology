@@ -1,0 +1,19 @@
+[2026-03-11 19:03:29] [INFO] ==========================================
+[2026-03-11 19:03:29] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 19:03:29] [INFO] Version: 1.0.0
+[2026-03-11 19:03:29] [INFO] ==========================================
+[2026-03-11 19:03:29] [INFO] 
+[2026-03-11 19:03:29] [INFO] Checking dependencies...
+[2026-03-11 19:03:29] [INFO] All dependencies satisfied.
+[2026-03-11 19:03:30] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 19:03:30] [INFO] Configuration loaded successfully.
+[2026-03-11 19:03:30] [INFO] Verifying gws authentication...
+[2026-03-11 19:03:31] [INFO] Authentication verified.
+[2026-03-11 19:03:31] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 19:03:34] [INFO] Successfully retrieved 100 emails
+[2026-03-11 19:03:34] [INFO] Processing and categorizing emails...
+[2026-03-11 19:03:35] [INFO] Archiving 19cdfb3fd8526e74 (low-priority) with label Label_19
+[2026-03-11 19:03:35] [INFO] Successfully archived 19cdfb3fd8526e74
+[2026-03-11 19:03:36] [INFO] Archiving 19cdfb3f2df68cb3 (linkedin-notification) with label Label_10
+[2026-03-11 19:03:37] [INFO] Successfully archived 19cdfb3f2df68cb3
+[2026-03-11 19:03:38] [INFO] Archiving 19cdf7021639f164 (promotional) with label Label_11

@@ -1,0 +1,216 @@
+[2026-03-11 18:14:02] [INFO] ==========================================
+[2026-03-11 18:14:02] [INFO] Google Workspace Agent - Inbox Triage
+[2026-03-11 18:14:02] [INFO] Version: 1.0.0
+[2026-03-11 18:14:02] [INFO] ==========================================
+[2026-03-11 18:14:02] [INFO] 
+[2026-03-11 18:14:02] [INFO] Checking dependencies...
+[2026-03-11 18:14:02] [INFO] All dependencies satisfied.
+[2026-03-11 18:14:02] [INFO] Loading configuration from /Users/simongonzalezdecruz/.config/gws-agent/config.sh...
+[2026-03-11 18:14:02] [INFO] Configuration loaded successfully.
+[2026-03-11 18:14:02] [INFO] Verifying gws authentication...
+[2026-03-11 18:14:03] [INFO] Authentication verified.
+[2026-03-11 18:14:03] [INFO] Fetching unread emails from Gmail...
+[2026-03-11 18:14:07] [INFO] Successfully retrieved 100 emails
+[2026-03-11 18:14:07] [INFO] Processing and categorizing emails...
+[2026-03-11 18:14:07] [INFO] Archiving email 19cdf7021639f164: promotional
+[2026-03-11 18:14:08] [INFO] Successfully archived 19cdf7021639f164
+[2026-03-11 18:14:09] [INFO] Archiving email 19cdf63f8231f2fa: low-priority
+[2026-03-11 18:14:10] [INFO] Successfully archived 19cdf63f8231f2fa
+[2026-03-11 18:14:10] [INFO] Archiving email 19cde98c8eefd5a4: low-priority
+[2026-03-11 18:14:11] [INFO] Successfully archived 19cde98c8eefd5a4
+[2026-03-11 18:14:12] [INFO] Archiving email 19cdf149e15b022b: job-alert
+[2026-03-11 18:14:12] [INFO] Successfully archived 19cdf149e15b022b
+[2026-03-11 18:14:13] [INFO] Archiving email 19cdf468d94abc7e: linkedin-notification
+[2026-03-11 18:14:14] [INFO] Successfully archived 19cdf468d94abc7e
+[2026-03-11 18:14:15] [INFO] Archiving email 19cdf4d2e84ab38f: linkedin-notification
+[2026-03-11 18:14:15] [INFO] Successfully archived 19cdf4d2e84ab38f
+[2026-03-11 18:14:16] [INFO] Archiving email 19cdecae4bc82f9e: linkedin-job
+[2026-03-11 18:14:17] [INFO] Successfully archived 19cdecae4bc82f9e
+[2026-03-11 18:14:18] [INFO] Archiving email 19cded8f645fa221: linkedin-notification
+[2026-03-11 18:14:18] [INFO] Successfully archived 19cded8f645fa221
+[2026-03-11 18:14:19] [INFO] Archiving email 19cdeff96da50d4e: job-alert
+[2026-03-11 18:14:20] [INFO] Successfully archived 19cdeff96da50d4e
+[2026-03-11 18:14:21] [INFO] Archiving email 19cdf01768f8d8ea: low-priority
+[2026-03-11 18:14:21] [INFO] Successfully archived 19cdf01768f8d8ea
+[2026-03-11 18:14:22] [INFO] Archiving email 19cde98a1ca4bd68: job-alert
+[2026-03-11 18:14:23] [INFO] Successfully archived 19cde98a1ca4bd68
+[2026-03-11 18:14:23] [INFO] Archiving email 19cde95db58199f2: low-priority
+[2026-03-11 18:14:24] [INFO] Successfully archived 19cde95db58199f2
+[2026-03-11 18:14:25] [INFO] Archiving email 19cde97b3dabad20: low-priority
+[2026-03-11 18:14:26] [INFO] Successfully archived 19cde97b3dabad20
+[2026-03-11 18:14:26] [INFO] Archiving email 19cde94e6c383520: low-priority
+[2026-03-11 18:14:27] [INFO] Successfully archived 19cde94e6c383520
+[2026-03-11 18:14:28] [INFO] Archiving email 19cde92c502969c4: low-priority
+[2026-03-11 18:14:29] [INFO] Successfully archived 19cde92c502969c4
+[2026-03-11 18:14:29] [INFO] Archiving email 19cde383ccacbbf4: newsletter
+[2026-03-11 18:14:30] [INFO] Successfully archived 19cde383ccacbbf4
+[2026-03-11 18:14:31] [INFO] Archiving email 19cde9635c281075: low-priority
+[2026-03-11 18:14:31] [INFO] Successfully archived 19cde9635c281075
+[2026-03-11 18:14:32] [INFO] Archiving email 19cde67dd03642fb: newsletter
+[2026-03-11 18:14:33] [INFO] Successfully archived 19cde67dd03642fb
+[2026-03-11 18:14:34] [INFO] Archiving email 19cde47f372ec60a: low-priority
+[2026-03-11 18:14:34] [INFO] Successfully archived 19cde47f372ec60a
+[2026-03-11 18:14:35] [INFO] Archiving email 19cde148c76de0bd: low-priority
+[2026-03-11 18:14:36] [INFO] Successfully archived 19cde148c76de0bd
+[2026-03-11 18:14:37] [INFO] Archiving email 19cde1357dd466af: newsletter
+[2026-03-11 18:14:37] [INFO] Successfully archived 19cde1357dd466af
+[2026-03-11 18:14:38] [INFO] Archiving email 19cddd67772a0565: job-alert
+[2026-03-11 18:14:39] [INFO] Successfully archived 19cddd67772a0565
+[2026-03-11 18:14:40] [INFO] Archiving email 19cddfc2f897c61a: linkedin-notification
+[2026-03-11 18:14:40] [INFO] Successfully archived 19cddfc2f897c61a
+[2026-03-11 18:14:41] [INFO] Archiving email 19cddd27e67d919e: low-priority
+[2026-03-11 18:14:42] [INFO] Successfully archived 19cddd27e67d919e
+[2026-03-11 18:14:43] [INFO] Archiving email 19cddd95fff9de90: promotional
+[2026-03-11 18:14:43] [INFO] Successfully archived 19cddd95fff9de90
+[2026-03-11 18:14:44] [INFO] Archiving email 19cdd7ae7a39cef6: linkedin-notification
+[2026-03-11 18:14:45] [INFO] Successfully archived 19cdd7ae7a39cef6
+[2026-03-11 18:14:45] [INFO] Archiving email 19cddb77ea8f7a65: linkedin-notification
+[2026-03-11 18:14:46] [INFO] Successfully archived 19cddb77ea8f7a65
+[2026-03-11 18:14:47] [INFO] Archiving email 19cdd95fd2d5ade9: linkedin-notification
+[2026-03-11 18:14:48] [INFO] Successfully archived 19cdd95fd2d5ade9
+[2026-03-11 18:14:48] [INFO] Archiving email 19cddbc88e544720: low-priority
+[2026-03-11 18:14:49] [INFO] Successfully archived 19cddbc88e544720
+[2026-03-11 18:14:50] [INFO] Archiving email 19cdd78096b93a3c: reference
+[2026-03-11 18:14:50] [INFO] Successfully archived 19cdd78096b93a3c
+[2026-03-11 18:14:51] [INFO] Archiving email 19cddaa46e6e25e0: low-priority
+[2026-03-11 18:14:52] [INFO] Successfully archived 19cddaa46e6e25e0
+[2026-03-11 18:14:53] [INFO] Archiving email 19cdd7463bf82ae9: newsletter
+[2026-03-11 18:14:53] [INFO] Successfully archived 19cdd7463bf82ae9
+[2026-03-11 18:14:54] [INFO] Archiving email 19cdd494e57b70ff: newsletter
+[2026-03-11 18:14:55] [INFO] Successfully archived 19cdd494e57b70ff
+[2026-03-11 18:14:56] [INFO] Archiving email 19cdd18a225ab593: low-priority
+[2026-03-11 18:14:56] [INFO] Successfully archived 19cdd18a225ab593
+[2026-03-11 18:14:57] [INFO] Archiving email 19cdd5038f36c52b: promotional
+[2026-03-11 18:14:58] [INFO] Successfully archived 19cdd5038f36c52b
+[2026-03-11 18:14:59] [INFO] Archiving email 19cdd37f24ec9e34: newsletter
+[2026-03-11 18:14:59] [INFO] Successfully archived 19cdd37f24ec9e34
+[2026-03-11 18:15:00] [INFO] Archiving email 19cdd37ac3a551a0: newsletter
+[2026-03-11 18:15:01] [INFO] Successfully archived 19cdd37ac3a551a0
+[2026-03-11 18:15:01] [INFO] Archiving email 19cdd21cedb44e6c: linkedin-notification
+[2026-03-11 18:15:02] [INFO] Successfully archived 19cdd21cedb44e6c
+[2026-03-11 18:15:03] [INFO] Archiving email 19cdd2c30c9599f0: low-priority
+[2026-03-11 18:15:04] [INFO] Successfully archived 19cdd2c30c9599f0
+[2026-03-11 18:15:05] [INFO] Archiving email 19cdcfbfaff98ed1: newsletter
+[2026-03-11 18:15:05] [INFO] Successfully archived 19cdcfbfaff98ed1
+[2026-03-11 18:15:06] [INFO] Archiving email 19cdcf5ceed0c8bc: promotional
+[2026-03-11 18:15:07] [INFO] Successfully archived 19cdcf5ceed0c8bc
+[2026-03-11 18:15:07] [INFO] Archiving email 19cdceb6396649ed: low-priority
+[2026-03-11 18:15:08] [INFO] Successfully archived 19cdceb6396649ed
+[2026-03-11 18:15:09] [INFO] Archiving email 19cdcb2a798bc58a: linkedin-notification
+[2026-03-11 18:15:10] [INFO] Successfully archived 19cdcb2a798bc58a
+[2026-03-11 18:15:10] [INFO] Archiving email 19cdce2eec19a4a2: low-priority
+[2026-03-11 18:15:11] [INFO] Successfully archived 19cdce2eec19a4a2
+[2026-03-11 18:15:12] [INFO] Archiving email 19cdc44e03cac724: low-priority
+[2026-03-11 18:15:13] [INFO] Successfully archived 19cdc44e03cac724
+[2026-03-11 18:15:14] [INFO] Archiving email 19cdc9ac00cb34ed: low-priority
+[2026-03-11 18:15:15] [INFO] Successfully archived 19cdc9ac00cb34ed
+[2026-03-11 18:15:15] [INFO] Archiving email 19cdc44e9d028c77: linkedin-notification
+[2026-03-11 18:15:16] [INFO] Successfully archived 19cdc44e9d028c77
+[2026-03-11 18:15:17] [INFO] Archiving email 19cdc27d369ae0fd: newsletter
+[2026-03-11 18:15:17] [INFO] Successfully archived 19cdc27d369ae0fd
+[2026-03-11 18:15:18] [INFO] Archiving email 19cdbd6fbf18fd70: linkedin-notification
+[2026-03-11 18:15:19] [INFO] Successfully archived 19cdbd6fbf18fd70
+[2026-03-11 18:15:20] [INFO] Archiving email 19cdbdfc58b06978: newsletter
+[2026-03-11 18:15:21] [INFO] Successfully archived 19cdbdfc58b06978
+[2026-03-11 18:15:21] [INFO] Archiving email 19cdbad1a6e0ab17: low-priority
+[2026-03-11 18:15:22] [INFO] Successfully archived 19cdbad1a6e0ab17
+[2026-03-11 18:15:23] [INFO] Archiving email 19cdba05ec32a22b: low-priority
+[2026-03-11 18:15:23] [INFO] Successfully archived 19cdba05ec32a22b
+[2026-03-11 18:15:24] [INFO] Archiving email 19cdb9ae9dcc3f8d: promotional
+[2026-03-11 18:15:25] [INFO] Successfully archived 19cdb9ae9dcc3f8d
+[2026-03-11 18:15:26] [INFO] Archiving email 19cdb9ac5bf93e22: promotional
+[2026-03-11 18:15:26] [INFO] Successfully archived 19cdb9ac5bf93e22
+[2026-03-11 18:15:27] [INFO] Archiving email 19cdb71eddf5db56: job-alert
+[2026-03-11 18:15:28] [INFO] Successfully archived 19cdb71eddf5db56
+[2026-03-11 18:15:29] [INFO] Archiving email 19cdb20db58b5981: linkedin-notification
+[2026-03-11 18:15:29] [INFO] Successfully archived 19cdb20db58b5981
+[2026-03-11 18:15:30] [INFO] Archiving email 19cdb68fbab4f17f: linkedin-notification
+[2026-03-11 18:15:31] [INFO] Successfully archived 19cdb68fbab4f17f
+[2026-03-11 18:15:32] [INFO] Archiving email 19cdafb40dd89937: linkedin-notification
+[2026-03-11 18:15:32] [INFO] Successfully archived 19cdafb40dd89937
+[2026-03-11 18:15:33] [INFO] Archiving email 19cdb091dc25f2b1: low-priority
+[2026-03-11 18:15:34] [INFO] Successfully archived 19cdb091dc25f2b1
+[2026-03-11 18:15:34] [INFO] Archiving email 19cdaea7d4cf014d: low-priority
+[2026-03-11 18:15:35] [INFO] Successfully archived 19cdaea7d4cf014d
+[2026-03-11 18:15:36] [INFO] Archiving email 19cdadf09b779940: promotional
+[2026-03-11 18:15:37] [INFO] Successfully archived 19cdadf09b779940
+[2026-03-11 18:15:37] [INFO] Archiving email 19cdadf109f64c9c: promotional
+[2026-03-11 18:15:38] [INFO] Successfully archived 19cdadf109f64c9c
+[2026-03-11 18:15:39] [INFO] Archiving email 19cdadf021ed921a: promotional
+[2026-03-11 18:15:40] [INFO] Successfully archived 19cdadf021ed921a
+[2026-03-11 18:15:40] [INFO] Archiving email 19cda565a0fda9ee: job-alert
+[2026-03-11 18:15:41] [INFO] Successfully archived 19cda565a0fda9ee
+[2026-03-11 18:15:42] [INFO] Archiving email 19cda36071e49b95: promotional
+[2026-03-11 18:15:43] [INFO] Successfully archived 19cda36071e49b95
+[2026-03-11 18:15:44] [INFO] Archiving email 19cda3d4cf57abaa: low-priority
+[2026-03-11 18:15:45] [INFO] Successfully archived 19cda3d4cf57abaa
+[2026-03-11 18:15:46] [INFO] Archiving email 19cdab7695441714: job-alert
+[2026-03-11 18:15:46] [INFO] Successfully archived 19cdab7695441714
+[2026-03-11 18:15:47] [INFO] Archiving email 19cda1f58ad9e8f1: linkedin-notification
+[2026-03-11 18:15:48] [INFO] Successfully archived 19cda1f58ad9e8f1
+[2026-03-11 18:15:48] [INFO] Archiving email 19cd9e5b71975b34: newsletter
+[2026-03-11 18:15:49] [INFO] Successfully archived 19cd9e5b71975b34
+[2026-03-11 18:15:50] [INFO] Archiving email 19cd9efa8b1ed492: low-priority
+[2026-03-11 18:15:51] [INFO] Successfully archived 19cd9efa8b1ed492
+[2026-03-11 18:15:51] [INFO] Archiving email 19cd9d42a8139acc: newsletter
+[2026-03-11 18:15:52] [INFO] Successfully archived 19cd9d42a8139acc
+[2026-03-11 18:15:53] [INFO] Archiving email 19cd971778854cc7: low-priority
+[2026-03-11 18:15:54] [INFO] Successfully archived 19cd971778854cc7
+[2026-03-11 18:15:54] [INFO] Archiving email 19cd9ba334b89abe: linkedin-notification
+[2026-03-11 18:15:55] [INFO] Successfully archived 19cd9ba334b89abe
+[2026-03-11 18:15:56] [INFO] Archiving email 19cd943f7af6a87a: linkedin-notification
+[2026-03-11 18:15:57] [INFO] Successfully archived 19cd943f7af6a87a
+[2026-03-11 18:15:57] [INFO] Archiving email 19cd942132a64e3c: newsletter
+[2026-03-11 18:15:58] [INFO] Successfully archived 19cd942132a64e3c
+[2026-03-11 18:15:59] [INFO] Archiving email 19cd970749bb9e93: job-alert
+[2026-03-11 18:16:00] [INFO] Successfully archived 19cd970749bb9e93
+[2026-03-11 18:16:00] [INFO] Archiving email 19cd9382c3106566: low-priority
+[2026-03-11 18:16:01] [INFO] Successfully archived 19cd9382c3106566
+[2026-03-11 18:16:02] [INFO] Archiving email 19cd9203041a627d: low-priority
+[2026-03-11 18:16:02] [INFO] Successfully archived 19cd9203041a627d
+[2026-03-11 18:16:03] [INFO] Archiving email 19cd924603a4a216: reference
+[2026-03-11 18:16:04] [INFO] Successfully archived 19cd924603a4a216
+[2026-03-11 18:16:05] [INFO] Archiving email 19cd9175fa0d3e09: linkedin-notification
+[2026-03-11 18:16:05] [INFO] Successfully archived 19cd9175fa0d3e09
+[2026-03-11 18:16:06] [INFO] Archiving email 19cd9081cc95ef70: low-priority
+[2026-03-11 18:16:07] [INFO] Successfully archived 19cd9081cc95ef70
+[2026-03-11 18:16:08] [INFO] Archiving email 19cd8f9aa2609f98: low-priority
+[2026-03-11 18:16:08] [INFO] Successfully archived 19cd8f9aa2609f98
+[2026-03-11 18:16:09] [INFO] Archiving email 19cd8faf6daff19b: low-priority
+[2026-03-11 18:16:10] [INFO] Successfully archived 19cd8faf6daff19b
+[2026-03-11 18:16:11] [INFO] Archiving email 19cd8d3f3904f624: job-alert
+[2026-03-11 18:16:11] [INFO] Successfully archived 19cd8d3f3904f624
+[2026-03-11 18:16:12] [INFO] Archiving email 19cd8d6526615397: linkedin-notification
+[2026-03-11 18:16:13] [INFO] Successfully archived 19cd8d6526615397
+[2026-03-11 18:16:15] [INFO] Archiving email 19cd8c9bdd024274: low-priority
+[2026-03-11 18:16:15] [INFO] Successfully archived 19cd8c9bdd024274
+[2026-03-11 18:16:16] [INFO] Archiving email 19cd8b342fc798d4: promotional
+[2026-03-11 18:16:17] [INFO] Successfully archived 19cd8b342fc798d4
+[2026-03-11 18:16:18] [INFO] Archiving email 19cd8b04b7afd596: linkedin-job
+[2026-03-11 18:16:18] [INFO] Successfully archived 19cd8b04b7afd596
+[2026-03-11 18:16:19] [INFO] Archiving email 19cd8b0e3ec099c9: promotional
+[2026-03-11 18:16:20] [INFO] Successfully archived 19cd8b0e3ec099c9
+[2026-03-11 18:16:20] [INFO] Archiving email 19cd8ad0ea61ab11: low-priority
+[2026-03-11 18:16:21] [INFO] Successfully archived 19cd8ad0ea61ab11
+[2026-03-11 18:16:22] [INFO] Archiving email 19cd895e18f98b00: low-priority
+[2026-03-11 18:16:23] [INFO] Successfully archived 19cd895e18f98b00
+[2026-03-11 18:16:23] [INFO] Archiving email 19cd85857af01339: promotional
+[2026-03-11 18:16:24] [INFO] Successfully archived 19cd85857af01339
+[2026-03-11 18:16:25] [INFO] Archiving email 19cd8680d4a9d08e: linkedin-notification
+[2026-03-11 18:16:26] [INFO] Successfully archived 19cd8680d4a9d08e
+[2026-03-11 18:16:26] [INFO] Archiving email 19cd852586f0fb76: linkedin-notification
+[2026-03-11 18:16:27] [INFO] Successfully archived 19cd852586f0fb76
+[2026-03-11 18:16:28] [INFO] Archiving email 19cd84dd4233a9df: reference
+[2026-03-11 18:16:28] [INFO] Successfully archived 19cd84dd4233a9df
+[2026-03-11 18:16:29] [INFO] Archiving email 19cd827a2e0560ec: newsletter
+[2026-03-11 18:16:30] [INFO] Successfully archived 19cd827a2e0560ec
+[2026-03-11 18:16:31] [INFO] Archiving email 19cd832c52e64199: job-alert
+[2026-03-11 18:16:31] [INFO] Successfully archived 19cd832c52e64199
+[2026-03-11 18:16:32] [INFO] Archiving email 19cd820325ecd1d9: promotional
+[2026-03-11 18:16:33] [INFO] Successfully archived 19cd820325ecd1d9
+[2026-03-11 18:16:34] [INFO] Archiving email 19cdce53c673dd4c: low-priority
+[2026-03-11 18:16:34] [INFO] Successfully archived 19cdce53c673dd4c
+[2026-03-11 18:16:34] [INFO] Processed 100 emails
+[2026-03-11 18:16:34] [INFO] Generating triage report...
+[2026-03-11 18:16:34] [INFO] Triage report saved to: /Users/simongonzalezdecruz/Desktop/Interpreted-Context-Methdology/workspaces/google-workspace-agent/output/triage-report-20260311-1814.md
+[2026-03-11 18:16:34] [INFO] Generating extraction candidates...
