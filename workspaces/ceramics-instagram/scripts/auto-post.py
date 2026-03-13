@@ -115,13 +115,14 @@ def generate_report(posts: list[dict], output_dir: Path) -> Path:
     return report_path
 
 
-def run_workflow(dry_run: bool = False, use_ai: bool = True) -> dict:
+def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3) -> dict:
     """
     Run the complete auto-post workflow.
 
     Args:
         dry_run: If True, don't actually schedule posts
         use_ai: If True, use AI for photo analysis
+        max_count: Maximum number of photos to process (1-3)
 
     Returns:
         Dict with workflow results
@@ -151,26 +152,32 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True) -> dict:
         log("Getting photos from 'To Post' album...")
         photos = get_photos_from_album("To Post")
 
-        if len(photos) < 3:
-            msg = f"Not enough photos in 'To Post' album (found {len(photos)}, need 3)"
+        # Flexible photo count: accept 1-3 photos
+        min_photos = 1
+        max_photos = 3
+
+        if len(photos) < min_photos:
+            msg = f"No photos in 'To Post' album"
             log(msg, level="WARNING")
             results["status"] = "skipped"
             results["message"] = msg
             return results
 
-        log(f"Found {len(photos)} photos in 'To Post' album")
+        # Determine how many photos to process (respect CLI override)
+        photo_count = min(len(photos), max_photos, max_count)
+        log(f"Found {len(photos)} photos in 'To Post' album, will process {photo_count}")
 
-        # Step 4: Get posting schedule
-        schedule = get_posting_schedule()
-        log(f"Posting schedule: {[s.strftime('%A %I:%M %p') for s in schedule]}")
+        # Step 4: Get posting schedule (only as many slots as photos)
+        schedule = get_posting_schedule(count=photo_count)
+        log(f"Posting schedule for {photo_count} post(s): {[s.strftime('%A %I:%M %p') for s in schedule]}")
 
-        # Step 5: Process first 3 photos
+        # Step 5: Process photos (dynamic count)
         temp_dir = get_temp_export_dir()
         clear_temp_exports()
 
         posts_to_schedule = []
 
-        for i in range(3):
+        for i in range(photo_count):
             photo = photos[i]
             log(f"Processing photo {i+1}: {photo.filename}")
 
@@ -225,8 +232,8 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True) -> dict:
                 }
             })
 
-        if len(posts_to_schedule) < 3:
-            error_msg = f"Only {len(posts_to_schedule)} posts ready, need 3"
+        if len(posts_to_schedule) < photo_count:
+            error_msg = f"Only {len(posts_to_schedule)} posts ready, expected {photo_count}"
             log(error_msg, level="ERROR")
             results["status"] = "partial"
             results["errors"].append(error_msg)
@@ -327,8 +334,9 @@ def show_status() -> None:
     print(f"   'Posted' album: {posted_count} photos")
 
     # Check next schedule
-    print("\n📅 Next Schedule:")
-    schedule = get_posting_schedule()
+    print("\n📅 Next Schedule (based on available photos):")
+    schedule_count = min(to_post_count, 3) if to_post_count > 0 else 3
+    schedule = get_posting_schedule(count=schedule_count)
     for i, dt in enumerate(schedule, 1):
         print(f"   Post {i}: {dt.strftime('%A %B %d at %I:%M %p')}")
 
@@ -356,11 +364,13 @@ def show_status() -> None:
 
     print("\n" + "=" * 60)
 
-    # Recommendation
-    if to_post_count >= 3:
-        print("✅ Ready to post! Run: python auto-post.py")
+    # Recommendation (flexible: 1-3 photos)
+    if to_post_count >= 1:
+        print(f"✅ Ready to post {min(to_post_count, 3)} photo(s)! Run: python auto-post.py")
+        if to_post_count > 3:
+            print(f"   Note: Only first 3 photos will be processed this week")
     else:
-        print(f"⚠️  Add {3 - to_post_count} more photos to 'To Post' album")
+        print("⚠️  Add at least 1 photo to 'To Post' album")
 
     print("=" * 60)
 
@@ -460,6 +470,14 @@ Examples:
         help="Disable AI photo analysis (use basic analysis)"
     )
 
+    parser.add_argument(
+        "--count", "-c",
+        type=int,
+        default=3,
+        choices=[1, 2, 3],
+        help="Number of photos to process (default: 3, max: 3)"
+    )
+
     args = parser.parse_args()
 
     if args.status:
@@ -471,15 +489,17 @@ Examples:
     else:
         dry_run = args.test
         use_ai = not args.no_ai
+        max_count = args.count
 
         print("=" * 60)
         print("Instagram Auto-Post")
         print("=" * 60)
         print(f"Mode: {'TEST (dry run)' if dry_run else 'LIVE'}")
         print(f"AI Analysis: {'Enabled' if use_ai else 'Disabled'}")
+        print(f"Max Photos: {max_count}")
         print("=" * 60)
 
-        results = run_workflow(dry_run=dry_run, use_ai=use_ai)
+        results = run_workflow(dry_run=dry_run, use_ai=use_ai, max_count=max_count)
 
         print("\n" + "=" * 60)
         print("Results")

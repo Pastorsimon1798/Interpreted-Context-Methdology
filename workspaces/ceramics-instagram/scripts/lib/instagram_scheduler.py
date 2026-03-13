@@ -85,7 +85,7 @@ def cookies_valid(cookies: list) -> bool:
     return all(found.values())
 
 
-def get_posting_schedule(reference_date: datetime = None) -> list[datetime]:
+def get_posting_schedule(reference_date: datetime = None, count: int = 3) -> list[datetime]:
     """
     Get optimal posting times for the current week.
 
@@ -96,9 +96,10 @@ def get_posting_schedule(reference_date: datetime = None) -> list[datetime]:
 
     Args:
         reference_date: Date to calculate from (defaults to next Monday)
+        count: Number of posting slots to return (1-3, default 3)
 
     Returns:
-        List of 3 datetime objects for posting
+        List of datetime objects for posting (length based on count)
     """
     if reference_date is None:
         # Default to next Monday
@@ -117,7 +118,9 @@ def get_posting_schedule(reference_date: datetime = None) -> list[datetime]:
     # Friday 8:00 AM
     post3 = post1 + timedelta(days=4)  # Monday + 4 days = Friday
 
-    return [post1, post2, post3]
+    # Return only as many slots as needed
+    all_slots = [post1, post2, post3]
+    return all_slots[:min(count, 3)]
 
 
 class InstagramScheduler:
