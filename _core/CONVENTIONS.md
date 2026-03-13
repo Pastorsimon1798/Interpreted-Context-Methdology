@@ -343,6 +343,69 @@ Workspaces should reference this protocol in their CLAUDE.md:
 
 ---
 
+## Pattern 17: Workspace Git Independence
+
+Each workspace is an independent git repository with its own version history. The root repo tracks framework files (`_core/`, `shared/`) but not individual workspace content.
+
+### Architecture
+
+```
+Interpreted-Context-Methdology/     ← Root repo (framework)
+├── .git/                           ← Tracks _core/ + shared/ only
+├── _core/                          ← Framework (merge from upstream)
+├── shared/skills/                  ← Cross-workspace skills
+├── .gitignore                      ← Excludes /workspaces/*/
+└── workspaces/
+    ├── workspace-name/
+    │   └── .git/                   ← Independent repo
+    └── another-workspace/
+        └── .git/                   ← Independent repo
+```
+
+### Root Repo Tracks
+
+- `_core/` - Framework templates and conventions
+- `shared/` - Cross-workspace skills and utilities
+- `.gitignore` - Workspace exclusions
+- Root `CLAUDE.md` and `README.md`
+
+### Workspace Repos Track
+
+- All workspace content (CLAUDE.md, stages/, data/, etc.)
+- Independent commit history
+- Independent branches
+
+### New Workspace Setup
+
+When creating a new workspace:
+
+```bash
+cd workspaces/new-workspace
+git init
+git add .
+git commit -m "Initialize new-workspace workspace"
+```
+
+### Upstream Sync Workflow
+
+To pull framework updates from the upstream ICM repo:
+
+```bash
+# In root directory
+git fetch origin
+git log HEAD..origin/main -- _core/  # Check what changed
+git merge origin/main -- _core/      # Merge framework updates
+```
+
+### Why This Matters
+
+- **Commit = save state** within a workspace feels natural
+- Workspaces can be moved/deleted without affecting others
+- Each workspace has focused, relevant history
+- Framework updates are explicit and controlled
+
+---
+
 ## Quality Guardrails
 
 - CONTEXT.md files: under 80 lines

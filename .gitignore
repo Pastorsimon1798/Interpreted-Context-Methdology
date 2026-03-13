@@ -29,3 +29,8 @@ desktop.ini
 
 # Cloned reference repos (local only)
 *-ref/
+
+# Independent workspace repos (each has its own .git/)
+/workspaces/ceramics-instagram/
+/workspaces/google-workspace-agent/
+/workspaces/research-pipeline/
