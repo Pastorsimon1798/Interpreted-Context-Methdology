@@ -16,12 +16,17 @@ from enum import Enum
 
 
 class ContentType(Enum):
-    """Type of ceramic content in the photo."""
+    """Type of ceramic content in the media."""
     FINISHED_PIECE = "finished"
     PROCESS = "process"
     KILN_REVEAL = "kiln_reveal"
     STUDIO = "studio"
     DETAIL = "detail"
+    # Video-specific types
+    PROCESS_VIDEO = "process_video"      # Throwing, trimming, glazing videos
+    KILN_REVEAL_VIDEO = "kiln_reveal_video"  # Kiln opening videos
+    STUDIO_TOUR = "studio_tour"          # Studio walkthrough
+    TIME_LAPSE = "time_lapse"            # Time-lapse pottery making
 
 
 @dataclass
@@ -47,6 +52,26 @@ class GeneratedCaption:
     cta: str
     hashtags: str
     full_caption: str
+
+
+@dataclass
+class VideoAnalysis:
+    """Analysis of a video's content."""
+    content_type: ContentType
+    video_type: str  # process, reveal, tour, timelapse
+    duration_seconds: float
+    primary_colors: list[str]
+    activity: str  # throwing, trimming, glazing, etc.
+    mood: str
+    has_audio: bool
+    suggested_hook: str
+    is_reel_suitable: bool  # True if < 90s and vertical/square
+
+
+def is_video_file(filepath: str) -> bool:
+    """Check if a file is a video based on extension."""
+    video_extensions = {".mp4", ".mov", ".m4v", ".avi", ".mkv", ".wmv"}
+    return Path(filepath).suffix.lower() in video_extensions
 
 
 def get_workspace_root() -> Path:
@@ -194,13 +219,107 @@ def analyze_photo(photo_path: str, use_ai: bool = True) -> PhotoAnalysis:
         return analyze_photo_basic(photo_path)
 
 
+def analyze_video_basic(video_path: str, duration: float = 0.0) -> VideoAnalysis:
+    """
+    Basic video analysis without AI (uses filename and metadata).
+
+    Args:
+        video_path: Path to the video file
+        duration: Video duration in seconds (if known)
+
+    Returns:
+        VideoAnalysis object with detected content
+    """
+    filename = Path(video_path).stem.lower()
+
+    # Detect video type from filename
+    is_throwing = any(kw in filename for kw in ["throw", "wheel", "spinning"])
+    is_trimming = any(kw in filename for kw in ["trim", "trimming"])
+    is_glazing = any(kw in filename for kw in ["glaze", "glazing", "dip"])
+    is_kiln = any(kw in filename for kw in ["kiln", "reveal", "unload", "opening"])
+    is_tour = any(kw in filename for kw in ["tour", "studio", "walkthrough", "space"])
+    is_timelapse = any(kw in filename for kw in ["timelapse", "time-lapse", "time lapse"])
+
+    # Determine activity and content type
+    if is_kiln:
+        video_type = "reveal"
+        activity = "kiln reveal"
+        content_type = ContentType.KILN_REVEAL_VIDEO
+    elif is_tour:
+        video_type = "tour"
+        activity = "studio tour"
+        content_type = ContentType.STUDIO_TOUR
+    elif is_timelapse:
+        video_type = "timelapse"
+        activity = "pottery making"
+        content_type = ContentType.TIME_LAPSE
+    elif is_throwing:
+        video_type = "process"
+        activity = "wheel throwing"
+        content_type = ContentType.PROCESS_VIDEO
+    elif is_trimming:
+        video_type = "process"
+        activity = "trimming"
+        content_type = ContentType.PROCESS_VIDEO
+    elif is_glazing:
+        video_type = "process"
+        activity = "glazing"
+        content_type = ContentType.PROCESS_VIDEO
+    else:
+        video_type = "process"
+        activity = "pottery process"
+        content_type = ContentType.PROCESS_VIDEO
+
+    # Check if suitable for Reels (< 90 seconds)
+    is_reel_suitable = 0 < duration <= 90
+
+    return VideoAnalysis(
+        content_type=content_type,
+        video_type=video_type,
+        duration_seconds=duration,
+        primary_colors=["earth tones"],
+        activity=activity,
+        mood="warm",
+        has_audio=False,  # Unknown without processing
+        suggested_hook=f"{activity.capitalize()} video",
+        is_reel_suitable=is_reel_suitable
+    )
+
+
+def analyze_video(video_path: str, use_ai: bool = True, duration: float = 0.0) -> VideoAnalysis:
+    """
+    Analyze a video to understand its content.
+
+    Uses AI for rich analysis, falls back to basic filename analysis.
+
+    Args:
+        video_path: Path to the video file
+        use_ai: Whether to use AI for analysis (default True)
+        duration: Video duration in seconds (if known)
+
+    Returns:
+        VideoAnalysis object with detected content
+    """
+    # For now, use basic analysis (AI video analysis requires frame extraction)
+    # TODO: Add AI video analysis with frame extraction
+    return analyze_video_basic(video_path, duration)
+
+
 def analyze_photo_with_ai(photo_path: str) -> PhotoAnalysis:
     """
-    Use AI to analyze photo content.
+    Use AI to analyze photo content via OpenRouter.
 
-    Requires ANTHROPIC_API_KEY environment variable.
+    Requires OPENROUTER_API_KEY environment variable.
+    Falls back to basic analysis if not available.
     """
-    import anthropic
+    import os
+    from openai import OpenAI
+
+    # Check for API key
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        print("OPENROUTER_API_KEY not set, using basic analysis")
+        return analyze_photo_basic(photo_path)
 
     # Read and encode image
     with open(photo_path, "rb") as f:
@@ -216,7 +335,11 @@ def analyze_photo_with_ai(photo_path: str) -> PhotoAnalysis:
 
     base64_image = base64.standard_b64encode(image_data).decode("utf-8")
 
-    client = anthropic.Anthropic()
+    # Use OpenRouter with OpenAI SDK
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1"
+    )
 
     prompt = """Analyze this ceramic pottery photo and provide a structured analysis.
 
@@ -234,33 +357,32 @@ Respond with ONLY a JSON object with these fields:
 Example response:
 {"piece_type": "vase", "content_type": "finished", "primary_colors": ["orange", "grey"], "secondary_colors": ["brown"], "glaze_type": "shino", "technique": "wheel-thrown", "mood": "earthy", "dimensions_visible": true, "brief_description": "Carbon trap shino vase with orange and grey tones"}"""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-6-20250514",
-        max_tokens=500,
+    # Use GPT-4o via OpenRouter (good vision capabilities)
+    response = client.chat.completions.create(
+        model="openai/gpt-4o",
         messages=[
             {
                 "role": "user",
                 "content": [
                     {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": media_type,
-                            "data": base64_image,
-                        },
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:{media_type};base64,{base64_image}"
+                        }
                     },
                     {
                         "type": "text",
-                        "text": prompt,
-                    },
-                ],
+                        "text": prompt
+                    }
+                ]
             }
         ],
+        max_tokens=500
     )
 
     # Parse response
     import json
-    response_text = message.content[0].text
+    response_text = response.choices[0].message.content
 
     # Extract JSON from response
     try:
@@ -340,6 +462,27 @@ def generate_body(analysis: PhotoAnalysis) -> str:
             "The details on this {piece} make it special.",
             "Zooming in on the texture of this {piece}.",
         ],
+        # Video-specific templates
+        ContentType.PROCESS_VIDEO: [
+            "Watch me {activity} in today's studio session. There's something so meditative about the process.",
+            "A glimpse into my {activity} process. Each piece tells a story from start to finish.",
+            "POV: You're watching me {activity}. The best part is seeing the form come to life.",
+        ],
+        ContentType.KILN_REVEAL_VIDEO: [
+            "The moment you've been waiting for - kiln reveal! The anticipation never gets old.",
+            "Watch me open the kiln and see how these pieces turned out. Spoiler: I'm obsessed!",
+            "Kiln reveal day is always full of surprises. Watch until the end to see my favorite piece!",
+        ],
+        ContentType.STUDIO_TOUR: [
+            "Come take a tour of my pottery studio in Long Beach. This is where the magic happens!",
+            "A look around my creative space. Every corner has a story.",
+            "Welcome to my studio! This is where I spend most of my days making ceramics.",
+        ],
+        ContentType.TIME_LAPSE: [
+            "Hours of work condensed into seconds. Watch this {activity} from start to finish!",
+            "From lump of clay to finished form in under a minute. The process is so satisfying.",
+            "Time-lapse of my latest pottery session. Can you spot the transformation?",
+        ],
     }
 
     # Get template for content type
@@ -353,12 +496,16 @@ def generate_body(analysis: PhotoAnalysis) -> str:
     glaze_note = f"The {analysis.glaze_type} glaze creates such unique patterns." if analysis.glaze_type else "The glaze created some beautiful surprises."
     technique_note = f"Using {analysis.technique} technique." if analysis.technique else "Handmade with care."
 
+    # Handle VideoAnalysis
+    activity = getattr(analysis, 'activity', 'pottery making') if hasattr(analysis, 'activity') else 'pottery making'
+
     body = template.format(
-        piece=analysis.piece_type,
+        piece=getattr(analysis, 'piece_type', 'piece'),
         colors=colors,
-        glaze=analysis.glaze_type or "glaze",
+        glaze=getattr(analysis, 'glaze_type', None) or "glaze",
         glaze_note=glaze_note,
         technique_note=technique_note,
+        activity=activity,
     )
 
     return body
@@ -392,6 +539,27 @@ def generate_cta(analysis: PhotoAnalysis) -> str:
             "What draws you to a piece - the form or the glaze?",
             "Save this for glaze inspiration",
         ],
+        # Video-specific CTAs
+        ContentType.PROCESS_VIDEO: [
+            "Save this for when you need pottery ASMR",
+            "What's your favorite part of the pottery process?",
+            "Drop a 🎨 if you love watching pottery being made",
+        ],
+        ContentType.KILN_REVEAL_VIDEO: [
+            "What was your favorite piece from this kiln load?",
+            "Do you love kiln reveal videos as much as I do?",
+            "Watch until the end to see my favorite piece!",
+        ],
+        ContentType.STUDIO_TOUR: [
+            "Do you have a creative space? Tell me about it!",
+            "Tag someone who would love this studio setup",
+            "What would you add to your dream pottery studio?",
+        ],
+        ContentType.TIME_LAPSE: [
+            "Save this for satisfying pottery content",
+            "What should I make next? Drop your ideas below!",
+            "From clay to form in seconds. What do you think?",
+        ],
     }
 
     options = cta_options.get(analysis.content_type, cta_options[ContentType.FINISHED_PIECE])
@@ -424,16 +592,25 @@ def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None) -> str
         ContentType.KILN_REVEAL: ["#stonewarepottery", "#potterylife", "#glaze"],
         ContentType.STUDIO: ["#ceramicstudio", "#potterylife", "#longbeachartist"],
         ContentType.DETAIL: ["#ceramicvase", "#modernceramics", "#design"],
+        # Video-specific hashtags
+        ContentType.PROCESS_VIDEO: ["#potteryvideo", "#wheelthrown", "#satisfying"],
+        ContentType.KILN_REVEAL_VIDEO: ["#kilnreveal", "#potteryvideo", "#satisfying"],
+        ContentType.STUDIO_TOUR: ["#studiovibes", "#potterystudio", "#artistlife"],
+        ContentType.TIME_LAPSE: ["#potterytimelapse", "#satisfyingvideo", "#asmr"],
     }
 
     # Adjust based on technique
-    if analysis.technique == "wheel-thrown":
+    if hasattr(analysis, 'technique') and analysis.technique == "wheel-thrown":
         topic_sets[ContentType.FINISHED_PIECE] = ["#wheelthrown", "#ceramicart", "#modernceramics"]
 
     topic_tags = topic_sets.get(analysis.content_type, topic_sets[ContentType.FINISHED_PIECE])
 
-    # Local/Discovery tags
-    local_tags = ["#longbeachartist", "#socalartist", "#reels"]
+    # Local/Discovery tags (video content gets Reels tag)
+    if analysis.content_type in [ContentType.PROCESS_VIDEO, ContentType.KILN_REVEAL_VIDEO,
+                                  ContentType.STUDIO_TOUR, ContentType.TIME_LAPSE]:
+        local_tags = ["#longbeachartist", "#socalartist", "#potteryreels"]
+    else:
+        local_tags = ["#longbeachartist", "#socalartist", "#reels"]
 
     # Combine all
     all_tags = core_tags + topic_tags + local_tags
@@ -447,17 +624,23 @@ def generate_caption(
     include_cta: bool = True
 ) -> GeneratedCaption:
     """
-    Generate a complete caption from photo analysis.
+    Generate a complete caption from photo/video analysis.
 
     Args:
-        analysis: PhotoAnalysis object
+        analysis: PhotoAnalysis or VideoAnalysis object
         voice_rules: Optional voice rules content (loaded from file if not provided)
         include_cta: Whether to include call-to-action
 
     Returns:
         GeneratedCaption with all components
     """
-    # Generate components
+    # Check if it's a video analysis
+    is_video = isinstance(analysis, VideoAnalysis)
+
+    if is_video:
+        return generate_caption_for_video(analysis, voice_rules, include_cta)
+
+    # Generate components for photo
     hook = generate_hook(analysis)
     body = generate_body(analysis)
     cta = generate_cta(analysis) if include_cta else ""
@@ -465,6 +648,67 @@ def generate_caption(
 
     # Assemble full caption
     parts = [hook]
+
+    if body:
+        parts.append("")
+        parts.append(body)
+
+    if cta:
+        parts.append("")
+        parts.append(cta)
+
+    # Hashtags at the end with separator
+    parts.append("")
+    parts.append(".")
+    parts.append(hashtags)
+
+    full_caption = "\n".join(parts)
+
+    return GeneratedCaption(
+        hook=hook,
+        body=body,
+        cta=cta,
+        hashtags=hashtags,
+        full_caption=full_caption
+    )
+
+
+def generate_caption_for_video(
+    analysis: VideoAnalysis,
+    voice_rules: str = None,
+    include_cta: bool = True
+) -> GeneratedCaption:
+    """
+    Generate a complete caption from video analysis.
+
+    Args:
+        analysis: VideoAnalysis object
+        voice_rules: Optional voice rules content
+        include_cta: Whether to include call-to-action
+
+    Returns:
+        GeneratedCaption with all components
+    """
+    # Generate video-specific hook
+    hook = f"{analysis.activity.capitalize()} - {analysis.suggested_hook}"
+
+    # Generate body using shared function
+    body = generate_body(analysis)
+
+    # Generate CTA
+    cta = generate_cta(analysis) if include_cta else ""
+
+    # Select hashtags
+    hashtags = select_hashtags(analysis)
+
+    # Assemble full caption
+    parts = [hook]
+
+    # Add duration note for longer videos
+    if analysis.duration_seconds > 60:
+        mins = int(analysis.duration_seconds // 60)
+        secs = int(analysis.duration_seconds % 60)
+        parts.append(f"({mins}:{secs:02d})")
 
     if body:
         parts.append("")

@@ -31,18 +31,25 @@ sys.path.insert(0, str(Path(__file__).parent / "lib"))
 from lib.photo_export import (
     create_albums,
     get_photos_from_album,
+    get_media_from_album,
     export_photo_by_index,
+    export_media_by_index,
     move_photo_by_index,
     get_photo_count,
     get_temp_export_dir,
     clear_temp_exports,
     ensure_photos_app_running,
+    is_video_file,
+    get_video_info,
+    MediaType,
 )
 
 from lib.caption_generator import (
     analyze_photo,
+    analyze_video,
     generate_caption,
     PhotoAnalysis,
+    VideoAnalysis,
     ContentType,
 )
 
@@ -98,10 +105,15 @@ def generate_report(posts: list[dict], output_dir: Path) -> Path:
     ]
 
     for i, post in enumerate(posts, 1):
-        lines.append(f"### Post {i}")
-        lines.append(f"- **Photo:** {post.get('photo_path', 'N/A')}")
+        media_type = post.get('media_type', 'photo')
+        lines.append(f"### Post {i} ({media_type})")
+        lines.append(f"- **Media:** {post.get('media_path', 'N/A')}")
         lines.append(f"- **Scheduled:** {post.get('schedule_time', 'N/A')}")
         lines.append(f"- **Status:** {post.get('status', 'pending')}")
+        if post.get('analysis', {}).get('video_type'):
+            lines.append(f"- **Video Type:** {post['analysis']['video_type']}")
+        if post.get('analysis', {}).get('duration'):
+            lines.append(f"- **Duration:** {post['analysis']['duration']:.1f}s")
         lines.append("")
         lines.append("**Caption:**")
         lines.append("```")
@@ -148,70 +160,96 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
         album_results = create_albums()
         log(f"Albums status: {album_results}")
 
-        # Step 3: Get photos from "To Post" album
-        log("Getting photos from 'To Post' album...")
-        photos = get_photos_from_album("To Post")
+        # Step 3: Get media from "To Post" album (photos and videos)
+        log("Getting media from 'To Post' album...")
+        media_items = get_media_from_album("To Post")
 
-        # Flexible photo count: accept 1-3 photos
-        min_photos = 1
-        max_photos = 3
+        # Count by type for reporting
+        photos = [m for m in media_items if m.media_type == MediaType.PHOTO]
+        videos = [m for m in media_items if m.media_type == MediaType.VIDEO]
+        log(f"Found {len(photos)} photos, {len(videos)} videos in 'To Post' album")
 
-        if len(photos) < min_photos:
-            msg = f"No photos in 'To Post' album"
+        # Flexible media count: accept 1-3 items
+        min_items = 1
+        max_items = 3
+
+        if len(media_items) < min_items:
+            msg = f"No media in 'To Post' album"
             log(msg, level="WARNING")
             results["status"] = "skipped"
             results["message"] = msg
             return results
 
-        # Determine how many photos to process (respect CLI override)
-        photo_count = min(len(photos), max_photos, max_count)
-        log(f"Found {len(photos)} photos in 'To Post' album, will process {photo_count}")
+        # Determine how many items to process (respect CLI override)
+        media_count = min(len(media_items), max_items, max_count)
+        log(f"Will process {media_count} media item(s)")
 
-        # Step 4: Get posting schedule (only as many slots as photos)
-        schedule = get_posting_schedule(count=photo_count)
-        log(f"Posting schedule for {photo_count} post(s): {[s.strftime('%A %I:%M %p') for s in schedule]}")
+        # Step 4: Get posting schedule (only as many slots as media)
+        schedule = get_posting_schedule(count=media_count)
+        log(f"Posting schedule for {media_count} post(s): {[s.strftime('%A %I:%M %p') for s in schedule]}")
 
-        # Step 5: Process photos (dynamic count)
+        # Step 5: Process media (photos and videos)
         temp_dir = get_temp_export_dir()
         clear_temp_exports()
 
         posts_to_schedule = []
 
-        for i in range(photo_count):
-            photo = photos[i]
-            log(f"Processing photo {i+1}: {photo.filename}")
+        for i in range(media_count):
+            media = media_items[i]
+            is_video = media.media_type == MediaType.VIDEO
+            media_type_str = "video" if is_video else "photo"
+            log(f"Processing {media_type_str} {i+1}: {media.filename}")
 
-            # Export photo
-            log(f"  Exporting photo...")
-            photo_path = export_photo_by_index("To Post", i, temp_dir)
+            # Export media
+            log(f"  Exporting {media_type_str}...")
+            media_path = export_media_by_index("To Post", i, temp_dir)
 
-            if not photo_path:
-                error_msg = f"Failed to export photo {i+1}"
+            if not media_path:
+                error_msg = f"Failed to export {media_type_str} {i+1}"
                 log(error_msg, level="ERROR")
                 results["errors"].append(error_msg)
                 continue
 
-            log(f"  Exported to: {photo_path}")
+            log(f"  Exported to: {media_path}")
 
-            # Analyze photo
-            log(f"  Analyzing photo...")
+            # Analyze media (photo or video)
+            log(f"  Analyzing {media_type_str}...")
             try:
-                analysis = analyze_photo(photo_path, use_ai=use_ai)
-                log(f"  Detected: {analysis.piece_type}, {analysis.content_type.value}")
+                if is_video:
+                    # Get video duration if available
+                    duration = media.duration if media.duration > 0 else 0
+                    analysis = analyze_video(media_path, use_ai=use_ai, duration=duration)
+                    log(f"  Detected: {analysis.video_type} video, {analysis.duration_seconds}s")
+                else:
+                    analysis = analyze_photo(media_path, use_ai=use_ai)
+                    log(f"  Detected: {analysis.piece_type}, {analysis.content_type.value}")
             except Exception as e:
                 log(f"  Analysis failed, using defaults: {e}", level="WARNING")
-                analysis = PhotoAnalysis(
-                    content_type=ContentType.FINISHED_PIECE,
-                    piece_type="piece",
-                    primary_colors=["earth tones"],
-                    secondary_colors=[],
-                    glaze_type=None,
-                    technique=None,
-                    mood="warm",
-                    is_process=False,
-                    dimensions_visible=False,
-                    suggested_hook="Handmade ceramic piece"
-                )
+                if is_video:
+                    analysis = VideoAnalysis(
+                        content_type=ContentType.PROCESS_VIDEO,
+                        video_type="process",
+                        duration_seconds=media.duration if media.duration > 0 else 30.0,
+                        primary_colors=["earth tones"],
+                        activity="pottery making",
+                        mood="warm",
+                        has_audio=False,
+                        suggested_hook="Pottery process video",
+                        is_reel_suitable=True
+                    )
+                else:
+                    analysis = PhotoAnalysis(
+                        content_type=ContentType.FINISHED_PIECE,
+                        piece_type="piece",
+                        primary_colors=["earth tones"],
+                        secondary_colors=[],
+                        glaze_type=None,
+                        technique=None,
+                        mood="warm",
+                        is_process=False,
+                        dimensions_visible=False,
+                        suggested_hook="Handmade ceramic piece"
+                    )
 
             # Generate caption
             log(f"  Generating caption...")
@@ -219,21 +257,24 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
             log(f"  Caption length: {len(caption.full_caption)} chars")
 
             posts_to_schedule.append({
-                "photo_path": photo_path,
+                "media_path": media_path,
+                "media_type": media_type_str,
                 "caption": caption.full_caption,
                 "schedule_time": schedule[i],
-                "photo_id": photo.id,
-                "photo_index": i,
+                "media_id": media.id,
+                "media_index": i,
                 "analysis": {
-                    "piece_type": analysis.piece_type,
+                    "piece_type": getattr(analysis, 'piece_type', None),
                     "content_type": analysis.content_type.value,
-                    "glaze_type": analysis.glaze_type,
-                    "technique": analysis.technique,
+                    "glaze_type": getattr(analysis, 'glaze_type', None),
+                    "technique": getattr(analysis, 'technique', None),
+                    "video_type": getattr(analysis, 'video_type', None),
+                    "duration": getattr(analysis, 'duration_seconds', None),
                 }
             })
 
-        if len(posts_to_schedule) < photo_count:
-            error_msg = f"Only {len(posts_to_schedule)} posts ready, expected {photo_count}"
+        if len(posts_to_schedule) < media_count:
+            error_msg = f"Only {len(posts_to_schedule)} posts ready, expected {media_count}"
             log(error_msg, level="ERROR")
             results["status"] = "partial"
             results["errors"].append(error_msg)
@@ -257,7 +298,7 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
 
                 schedule_results = scheduler.schedule_week(
                     [ScheduledPost(
-                        photo_path=p["photo_path"],
+                        photo_path=p["media_path"],
                         caption=p["caption"],
                         schedule_time=p["schedule_time"]
                     ) for p in posts_to_schedule],
@@ -275,18 +316,18 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
             finally:
                 scheduler.close()
 
-        # Step 7: Move photos to "Posted" album
-        log("Moving photos to 'Posted' album...")
+        # Step 7: Move media to "Posted" album
+        log("Moving media to 'Posted' album...")
         for post in posts_to_schedule:
             if post.get("status") in ["scheduled", "dry_run"]:
                 if dry_run:
-                    log(f"  Would move photo {post['photo_index'] + 1} to 'Posted'")
+                    log(f"  Would move {post['media_type']} {post['media_index'] + 1} to 'Posted'")
                 else:
-                    success = move_photo_by_index("To Post", "Posted", post["photo_index"])
+                    success = move_photo_by_index("To Post", "Posted", post["media_index"])
                     if success:
-                        log(f"  Moved photo {post['photo_index'] + 1} to 'Posted'")
+                        log(f"  Moved {post['media_type']} {post['media_index'] + 1} to 'Posted'")
                     else:
-                        log(f"  Failed to move photo {post['photo_index'] + 1}", level="WARNING")
+                        log(f"  Failed to move {post['media_type']} {post['media_index'] + 1}", level="WARNING")
 
         # Step 8: Generate report
         log("Generating report...")

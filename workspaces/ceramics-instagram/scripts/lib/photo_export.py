@@ -1,11 +1,11 @@
 """
-Photo export module for macOS Photos app integration.
+Photo and video export module for macOS Photos app integration.
 
 Uses AppleScript to interact with the Photos app for:
 - Creating albums ("To Post", "Posted")
-- Listing photos in albums
-- Exporting photos to file system
-- Moving photos between albums
+- Listing media (photos and videos) in albums
+- Exporting media to file system
+- Moving media between albums
 """
 
 import subprocess
@@ -17,17 +17,30 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 from dataclasses import dataclass
+from enum import Enum
+
+
+class MediaType(Enum):
+    """Type of media item."""
+    PHOTO = "photo"
+    VIDEO = "video"
 
 
 @dataclass
-class PhotoInfo:
-    """Photo metadata from Photos app."""
+class MediaInfo:
+    """Media metadata from Photos app."""
     id: str
     filename: str
     date: str
     width: int
     height: int
     album: str
+    media_type: MediaType = MediaType.PHOTO
+    duration: float = 0.0  # Duration in seconds (for videos)
+
+
+# Backward compatibility alias
+PhotoInfo = MediaInfo
 
 
 def run_applescript(script: str) -> tuple[bool, str]:
@@ -113,15 +126,15 @@ def create_albums(albums: list[str] = None) -> dict[str, bool]:
     return results
 
 
-def get_photos_from_album(album_name: str) -> list[PhotoInfo]:
+def get_media_from_album(album_name: str) -> list[MediaInfo]:
     """
-    Get list of photos from an album.
+    Get list of media (photos and videos) from an album.
 
     Args:
-        album_name: Name of the album to get photos from
+        album_name: Name of the album to get media from
 
     Returns:
-        List of PhotoInfo objects with photo metadata
+        List of MediaInfo objects with media metadata
     """
     script = f'''
     tell application "Photos"
@@ -138,47 +151,66 @@ def get_photos_from_album(album_name: str) -> list[PhotoInfo]:
             return "ALBUM_NOT_FOUND"
         end if
 
-        set photoList to {{}}
+        set mediaList to {{}}
         repeat with p in media items of targetAlbum
-            set photoId to id of p
-            set photoFilename to filename of p
-            set photoDate to date of p as string
-            set photoWidth to width of p
-            set photoHeight to height of p
+            set mediaId to id of p
+            set mediaFilename to filename of p
+            set mediaDate to date of p as string
+            set mediaWidth to width of p
+            set mediaHeight to height of p
 
-            set end of photoList to photoId & "|||" & photoFilename & "|||" & photoDate & "|||" & photoWidth & "|||" & photoHeight
+            set end of mediaList to mediaId & "|||" & mediaFilename & "|||" & mediaDate & "|||" & mediaWidth & "|||" & mediaHeight
         end repeat
 
-        return photoList as string
+        return mediaList as string
     end tell
     '''
 
     success, output = run_applescript(script)
 
     if not success:
-        print(f"Error getting photos: {output}")
+        print(f"Error getting media: {output}")
         return []
 
     if output == "ALBUM_NOT_FOUND":
         print(f"Album '{album_name}' not found")
         return []
 
-    photos = []
+    media_items = []
     if output:
         for line in output.split(", "):
             if "|||" in line:
                 parts = line.split("|||")
                 if len(parts) >= 5:
-                    photos.append(PhotoInfo(
+                    # Detect video by file extension
+                    filename = parts[1].strip().lower()
+                    is_video = any(ext in filename for ext in [".mov", ".mp4", ".m4v"])
+
+                    media_items.append(MediaInfo(
                         id=parts[0].strip(),
                         filename=parts[1].strip(),
                         date=parts[2].strip(),
                         width=int(parts[3].strip()) if parts[3].strip().isdigit() else 0,
                         height=int(parts[4].strip()) if parts[4].strip().isdigit() else 0,
-                        album=album_name
+                        album=album_name,
+                        media_type=MediaType.VIDEO if is_video else MediaType.PHOTO,
+                        duration=0.0  # Will be detected during export if needed
                     ))
 
-    return photos
+    return media_items
+
+
+def get_photos_from_album(album_name: str) -> list[PhotoInfo]:
+    """
+    Get list of photos from an album (backward compatible).
+
+    Args:
+        album_name: Name of the album to get photos from
+
+    Returns:
+        List of PhotoInfo/MediaInfo objects with photo metadata
+    """
+    return get_media_from_album(album_name)
 
 
 def export_photo(photo_id: str, output_dir: str, filename: Optional[str] = None) -> Optional[str]:
@@ -492,10 +524,139 @@ def clear_temp_exports() -> None:
         Path(temp_dir).mkdir(parents=True, exist_ok=True)
 
 
+def is_video_file(filepath: str) -> bool:
+    """Check if a file is a video based on extension."""
+    video_extensions = {".mp4", ".mov", ".m4v", ".avi", ".mkv", ".wmv"}
+    return Path(filepath).suffix.lower() in video_extensions
+
+
+def get_video_info(video_path: str) -> dict:
+    """
+    Get video metadata using ffprobe (if available).
+
+    Returns dict with duration, width, height, fps, or empty dict if ffprobe unavailable.
+    """
+    import shutil
+
+    if not shutil.which("ffprobe"):
+        return {}
+
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe", "-v", "quiet",
+                "-print_format", "json",
+                "-show_format", "-show_streams",
+                video_path
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if result.returncode == 0:
+            data = json.loads(result.stdout)
+            video_stream = next(
+                (s for s in data.get("streams", []) if s.get("codec_type") == "video"),
+                None
+            )
+
+            if video_stream:
+                return {
+                    "width": video_stream.get("width", 0),
+                    "height": video_stream.get("height", 0),
+                    "duration": float(data.get("format", {}).get("duration", 0)),
+                    "fps": eval(video_stream.get("r_frame_rate", "0/1")),
+                }
+    except Exception:
+        pass
+
+    return {}
+
+
+def export_media_by_index(album_name: str, index: int, output_dir: str) -> Optional[str]:
+    """
+    Export media (photo or video) by its index in an album.
+
+    This is more reliable than using media IDs for export.
+    Works for both photos and videos.
+
+    Args:
+        album_name: Name of the album
+        index: Zero-based index of media in album
+        output_dir: Directory to export to
+
+    Returns:
+        Path to exported file, or None if export failed
+    """
+    os.makedirs(output_dir, exist_ok=True)
+
+    script = f'''
+    tell application "Photos"
+        set targetAlbum to missing value
+
+        repeat with a in albums
+            if name of a is "{album_name}" then
+                set targetAlbum to a
+                exit repeat
+            end if
+        end repeat
+
+        if targetAlbum is missing value then
+            return "ALBUM_NOT_FOUND"
+        end if
+
+        set albumMedia to media items of targetAlbum
+        set mediaCount to count of albumMedia
+
+        if mediaCount is 0 then
+            return "NO_MEDIA"
+        end if
+
+        if {index} >= mediaCount then
+            return "INDEX_OUT_OF_RANGE"
+        end if
+
+        set targetMedia to item ({index} + 1) of albumMedia
+        set exportPath to POSIX path of "{output_dir}"
+        set mediaFilename to filename of targetMedia
+
+        export {{targetMedia}} to exportPath with using originals
+
+        return mediaFilename
+    end tell
+    '''
+
+    success, output = run_applescript(script)
+
+    if not success:
+        print(f"Error exporting media: {output}")
+        return None
+
+    if output in ["ALBUM_NOT_FOUND", "NO_MEDIA", "INDEX_OUT_OF_RANGE"]:
+        print(f"Export failed: {output}")
+        return None
+
+    # The file should be in output_dir with the original filename
+    exported_path = Path(output_dir) / output
+    if exported_path.exists():
+        return str(exported_path)
+
+    # Try to find any recent file
+    import time
+    time.sleep(1)
+    exported_files = list(Path(output_dir).glob("*"))
+    if exported_files:
+        latest = max(exported_files, key=lambda f: f.stat().st_mtime)
+        return str(latest)
+
+    return None
+
+
 def test_module():
-    """Test the photo export module."""
+    """Test the photo/video export module."""
     print("=" * 60)
-    print("Photo Export Module Test")
+    print("Photo/Video Export Module Test")
     print("=" * 60)
 
     # 1. Ensure Photos app is running
@@ -513,43 +674,58 @@ def test_module():
         status = "✓" if success else "✗"
         print(f"   {status} {album}")
 
-    # 3. Get photo count
+    # 3. Get media count
     print("\n3. Checking 'To Post' album...")
     count = get_photo_count("To Post")
     if count >= 0:
-        print(f"   ✓ Found {count} photos in 'To Post' album")
+        print(f"   ✓ Found {count} media items in 'To Post' album")
     else:
-        print("   ✗ Could not get photo count")
+        print("   ✗ Could not get media count")
         return
 
     if count == 0:
-        print("\n   Note: Add some photos to 'To Post' album to test export")
+        print("\n   Note: Add some photos/videos to 'To Post' album to test export")
         print("   Skipping export test")
         return
 
-    # 4. List photos
-    print("\n4. Listing photos in 'To Post' album...")
-    photos = get_photos_from_album("To Post")
-    if photos:
-        print(f"   ✓ Found {len(photos)} photos:")
-        for i, photo in enumerate(photos[:5]):  # Show first 5
-            print(f"      {i+1}. {photo.filename} ({photo.width}x{photo.height})")
-        if len(photos) > 5:
-            print(f"      ... and {len(photos) - 5} more")
-    else:
-        print("   ✗ No photos found or error occurred")
+    # 4. List media (photos and videos)
+    print("\n4. Listing media in 'To Post' album...")
+    media_items = get_media_from_album("To Post")
+    if media_items:
+        photos = [m for m in media_items if m.media_type == MediaType.PHOTO]
+        videos = [m for m in media_items if m.media_type == MediaType.VIDEO]
 
-    # 5. Test export (if photos available)
-    if photos:
-        print("\n5. Testing photo export...")
+        print(f"   ✓ Found {len(photos)} photos, {len(videos)} videos:")
+        for i, item in enumerate(media_items[:5]):  # Show first 5
+            type_icon = "📹" if item.media_type == MediaType.VIDEO else "📷"
+            duration_str = f" ({item.duration:.1f}s)" if item.duration > 0 else ""
+            print(f"      {i+1}. {type_icon} {item.filename} ({item.width}x{item.height}){duration_str}")
+        if len(media_items) > 5:
+            print(f"      ... and {len(media_items) - 5} more")
+    else:
+        print("   ✗ No media found or error occurred")
+
+    # 5. Test export (if media available)
+    if media_items:
+        print("\n5. Testing media export...")
         temp_dir = get_temp_export_dir()
         print(f"   Export directory: {temp_dir}")
 
-        exported = export_photo_by_index("To Post", 0, temp_dir)
+        exported = export_media_by_index("To Post", 0, temp_dir)
         if exported:
             print(f"   ✓ Exported to: {exported}")
             file_size = Path(exported).stat().st_size
+            is_video = is_video_file(exported)
+            type_str = "video" if is_video else "photo"
+            print(f"   File type: {type_str}")
             print(f"   File size: {file_size / 1024:.1f} KB")
+
+            # Get video info if it's a video
+            if is_video:
+                video_info = get_video_info(exported)
+                if video_info:
+                    print(f"   Video info: {video_info.get('width')}x{video_info.get('height')}, "
+                          f"{video_info.get('duration', 0):.1f}s")
         else:
             print("   ✗ Export failed")
 
