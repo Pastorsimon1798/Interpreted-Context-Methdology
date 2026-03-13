@@ -289,6 +289,7 @@ def export_photo_by_index(album_name: str, index: int, output_dir: str) -> Optio
     Returns:
         Path to exported file, or None if export failed
     """
+    # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
 
     script = f'''
@@ -318,10 +319,10 @@ def export_photo_by_index(album_name: str, index: int, output_dir: str) -> Optio
         end if
 
         set targetPhoto to item ({index} + 1) of albumPhotos
-        set exportPath to POSIX path of "{output_dir}"
         set photoFilename to filename of targetPhoto
+        set exportPath to POSIX file "{output_dir}/"
 
-        export {{targetPhoto}} to exportPath with using originals
+        export {{targetPhoto}} to exportPath as alias with using originals
 
         return photoFilename
     end tell
@@ -584,11 +585,12 @@ def export_media_by_index(album_name: str, index: int, output_dir: str) -> Optio
     Args:
         album_name: Name of the album
         index: Zero-based index of media in album
-        output_dir: Directory to export to
+        output_dir: Directory to export to (must exist)
 
     Returns:
         Path to exported file, or None if export failed
     """
+    # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
 
     script = f'''
@@ -618,10 +620,10 @@ def export_media_by_index(album_name: str, index: int, output_dir: str) -> Optio
         end if
 
         set targetMedia to item ({index} + 1) of albumMedia
-        set exportPath to POSIX path of "{output_dir}"
         set mediaFilename to filename of targetMedia
+        set exportPath to POSIX file "{output_dir}/"
 
-        export {{targetMedia}} to exportPath with using originals
+        export {{targetMedia}} to exportPath as alias with using originals
 
         return mediaFilename
     end tell
@@ -642,7 +644,7 @@ def export_media_by_index(album_name: str, index: int, output_dir: str) -> Optio
     if exported_path.exists():
         return str(exported_path)
 
-    # Try to find any recent file
+    # Try to find any recent file (might have different name)
     import time
     time.sleep(1)
     exported_files = list(Path(output_dir).glob("*"))
