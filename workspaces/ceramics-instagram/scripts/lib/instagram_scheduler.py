@@ -30,6 +30,36 @@ class ScheduledPost:
     photo_id: Optional[str] = None
 
 
+@dataclass
+class ScheduledReel:
+    """A scheduled Instagram Reel."""
+    video_path: str
+    caption: str
+    schedule_time: datetime
+    duration_seconds: float
+    aspect_ratio: str = "vertical"
+
+
+@dataclass
+class ScheduledStory:
+    """A scheduled Instagram Story."""
+    media_path: str
+    schedule_time: datetime
+    media_type: str  # "photo" or "video"
+    poll_question: Optional[str] = None
+    poll_options: Optional[list[str]] = None
+
+
+@dataclass
+class ScheduledCarousel:
+    """A scheduled Instagram carousel post."""
+    media_paths: list[str]  # 2-10 photos/videos
+    caption: str
+    schedule_time: datetime
+    card_count: int
+    carousel_id: Optional[str] = None
+
+
 def get_workspace_root() -> Path:
     """Get the workspace root directory."""
     return Path(__file__).parent.parent.parent
@@ -362,6 +392,341 @@ class InstagramScheduler:
 
         except Exception as e:
             print(f"Error scheduling post: {e}")
+            return False
+
+    def navigate_to_reels(self) -> bool:
+        """Navigate to Reels creation in Meta Business Suite."""
+        if not self.page:
+            return False
+
+        try:
+            # Go to Meta Business Suite content section
+            self.page.goto("https://business.facebook.com/latest/content")
+            self.page.wait_for_load_state("networkidle", timeout=30000)
+            time.sleep(2)
+
+            # Look for Create button and Reel option
+            create_selectors = [
+                'text="Create"',
+                '[aria-label="Create"]',
+                'div[role="button"]:has-text("Create")',
+            ]
+
+            for selector in create_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        break
+                except Exception:
+                    continue
+
+            # Look for Reel tab
+            reel_selectors = [
+                'text="Reel"',
+                'text="Instagram Reel"',
+                '[aria-label="Reel"]',
+            ]
+
+            for selector in reel_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        return True
+                except Exception:
+                    continue
+
+            print("Could not find Reels option. Please navigate manually.")
+            return True  # Continue anyway, user can navigate
+
+        except Exception as e:
+            print(f"Error navigating to Reels: {e}")
+            return False
+
+    def schedule_reel(self, reel: ScheduledReel, dry_run: bool = False) -> bool:
+        """
+        Schedule a Reel.
+
+        Args:
+            reel: ScheduledReel object with video, caption, and time
+            dry_run: If True, don't actually schedule
+
+        Returns:
+            True if successful
+        """
+        if not self.page:
+            return False
+
+        print(f"\nScheduling Reel for {reel.schedule_time.strftime('%A %B %d at %I:%M %p')}")
+        print(f"Video: {Path(reel.video_path).name}")
+        print(f"Duration: {reel.duration_seconds:.1f}s")
+        print(f"Aspect ratio: {reel.aspect_ratio}")
+
+        if dry_run:
+            print("DRY RUN - would schedule this Reel")
+            return True
+
+        try:
+            # Navigate to Reels section
+            self.navigate_to_reels()
+
+            # Upload video
+            print("Uploading video...")
+            upload_input = self.page.query_selector('input[type="file"]')
+            if upload_input:
+                upload_input.set_input_files(reel.video_path)
+                time.sleep(5)  # Wait longer for video upload
+            else:
+                print("Could not find upload input")
+                return False
+
+            # Add caption
+            print("Adding caption...")
+            caption_selectors = [
+                'div[contenteditable="true"]',
+                'textarea[placeholder*="caption"]',
+                'textarea[placeholder*="Write"]',
+            ]
+
+            for selector in caption_selectors:
+                try:
+                    caption_box = self.page.query_selector(selector)
+                    if caption_box:
+                        caption_box.click()
+                        caption_box.fill(reel.caption)
+                        break
+                except Exception:
+                    continue
+
+            # Schedule for later
+            print("Setting schedule time...")
+            schedule_selectors = [
+                'text="Schedule"',
+                'text="Schedule for later"',
+            ]
+
+            for selector in schedule_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        break
+                except Exception:
+                    continue
+
+            print("Reel uploaded and caption added!")
+            print("Please verify the schedule time in the UI and click Schedule.")
+            print("Press Enter when done...")
+            input()
+
+            return True
+
+        except Exception as e:
+            print(f"Error scheduling Reel: {e}")
+            return False
+
+    def navigate_to_stories(self) -> bool:
+        """Navigate to Stories creation in Meta Business Suite."""
+        if not self.page:
+            return False
+
+        try:
+            # Go to Meta Business Suite content section
+            self.page.goto("https://business.facebook.com/latest/content")
+            self.page.wait_for_load_state("networkidle", timeout=30000)
+            time.sleep(2)
+
+            # Look for Create button
+            create_selectors = [
+                'text="Create"',
+                '[aria-label="Create"]',
+                'div[role="button"]:has-text("Create")',
+            ]
+
+            for selector in create_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        break
+                except Exception:
+                    continue
+
+            # Look for Story tab
+            story_selectors = [
+                'text="Story"',
+                'text="Instagram Story"',
+                '[aria-label="Story"]',
+            ]
+
+            for selector in story_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        return True
+                except Exception:
+                    continue
+
+            print("Could not find Stories option. Please navigate manually.")
+            return True  # Continue anyway
+
+        except Exception as e:
+            print(f"Error navigating to Stories: {e}")
+            return False
+
+    def schedule_story(self, story: ScheduledStory, dry_run: bool = False) -> bool:
+        """
+        Schedule a Story.
+
+        Args:
+            story: ScheduledStory object with media and time
+            dry_run: If True, don't actually schedule
+
+        Returns:
+            True if successful
+        """
+        if not self.page:
+            return False
+
+        print(f"\nScheduling Story for {story.schedule_time.strftime('%A %B %d at %I:%M %p')}")
+        print(f"Media: {Path(story.media_path).name}")
+        print(f"Type: {story.media_type}")
+
+        if story.poll_question:
+            print(f"Poll: {story.poll_question}")
+
+        if dry_run:
+            print("DRY RUN - would schedule this Story")
+            return True
+
+        try:
+            # Navigate to Stories section
+            self.navigate_to_stories()
+
+            # Upload media
+            print("Uploading media...")
+            upload_input = self.page.query_selector('input[type="file"]')
+            if upload_input:
+                upload_input.set_input_files(story.media_path)
+                time.sleep(3)
+            else:
+                print("Could not find upload input")
+                return False
+
+            # Add poll if specified
+            if story.poll_question and story.poll_options:
+                print("Adding poll sticker...")
+                # This requires clicking on stickers button and adding poll
+                # UI-dependent, so we'll note it for manual addition
+                print(f"NOTE: Please add poll manually: '{story.poll_question}'")
+                print(f"Options: {', '.join(story.poll_options)}")
+
+            # Stories typically don't have scheduling in the same way
+            # They're usually posted immediately or scheduled for a specific time
+            print("Story uploaded!")
+            print("Stories expire in 24 hours.")
+            print("Press Enter when done...")
+            input()
+
+            return True
+
+        except Exception as e:
+            print(f"Error scheduling Story: {e}")
+            return False
+
+    def schedule_carousel(self, carousel: ScheduledCarousel, dry_run: bool = False) -> bool:
+        """
+        Schedule a carousel post with multiple images/videos.
+
+        Args:
+            carousel: ScheduledCarousel object with media paths and caption
+            dry_run: If True, don't actually schedule
+
+        Returns:
+            True if successful
+        """
+        if not self.page:
+            return False
+
+        print(f"\nScheduling Carousel for {carousel.schedule_time.strftime('%A %B %d at %I:%M %p')}")
+        print(f"Cards: {carousel.card_count}")
+        for i, path in enumerate(carousel.media_paths):
+            print(f"  {i+1}. {Path(path).name}")
+
+        if dry_run:
+            print("DRY RUN - would schedule this Carousel")
+            return True
+
+        try:
+            # Navigate to create post
+            self.navigate_to_scheduler()
+
+            # Upload multiple files
+            print("Uploading carousel media...")
+            upload_input = self.page.query_selector('input[type="file"]')
+            if upload_input:
+                # Upload all files at once for carousel
+                upload_input.set_input_files(carousel.media_paths)
+                time.sleep(5)  # Longer wait for multiple files
+            else:
+                print("Could not find upload input")
+                return False
+
+            # Verify carousel format detected
+            print("Verifying carousel format...")
+            time.sleep(2)
+
+            # Add caption
+            print("Adding caption...")
+            caption_selectors = [
+                'div[contenteditable="true"]',
+                'textarea[placeholder*="caption"]',
+                'textarea[placeholder*="Write"]',
+            ]
+
+            for selector in caption_selectors:
+                try:
+                    caption_box = self.page.query_selector(selector)
+                    if caption_box:
+                        caption_box.click()
+                        caption_box.fill(carousel.caption)
+                        break
+                except Exception:
+                    continue
+
+            # Schedule for later
+            print("Setting schedule time...")
+            schedule_selectors = [
+                'text="Schedule"',
+                'text="Schedule for later"',
+            ]
+
+            for selector in schedule_selectors:
+                try:
+                    element = self.page.query_selector(selector)
+                    if element:
+                        element.click()
+                        time.sleep(1)
+                        break
+                except Exception:
+                    continue
+
+            print("Carousel uploaded and caption added!")
+            print("Please verify the schedule time in the UI and click Schedule.")
+            print("Press Enter when done...")
+            input()
+
+            return True
+
+        except Exception as e:
+            print(f"Error scheduling Carousel: {e}")
             return False
 
     def schedule_week(self, posts: list[ScheduledPost], dry_run: bool = False) -> dict:

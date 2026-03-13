@@ -66,6 +66,18 @@ class VideoAnalysis:
     has_audio: bool
     suggested_hook: str
     is_reel_suitable: bool  # True if < 90s and vertical/square
+    aspect_ratio_category: str = "horizontal"
+    duration_warning: Optional[str] = None
+
+
+@dataclass
+class CarouselAnalysis:
+    """Analysis for carousel posts."""
+    content_types: list[ContentType]  # One per item
+    primary_theme: str
+    narrative_flow: str  # How items connect
+    hooks: list[str]
+    cta: str
 
 
 def is_video_file(filepath: str) -> bool:
@@ -219,13 +231,15 @@ def analyze_photo(photo_path: str, use_ai: bool = True) -> PhotoAnalysis:
         return analyze_photo_basic(photo_path)
 
 
-def analyze_video_basic(video_path: str, duration: float = 0.0) -> VideoAnalysis:
+def analyze_video_basic(video_path: str, duration: float = 0.0, width: int = 0, height: int = 0) -> VideoAnalysis:
     """
     Basic video analysis without AI (uses filename and metadata).
 
     Args:
         video_path: Path to the video file
         duration: Video duration in seconds (if known)
+        width: Video width (if known)
+        height: Video height (if known)
 
     Returns:
         VideoAnalysis object with detected content
@@ -270,8 +284,27 @@ def analyze_video_basic(video_path: str, duration: float = 0.0) -> VideoAnalysis
         activity = "pottery process"
         content_type = ContentType.PROCESS_VIDEO
 
-    # Check if suitable for Reels (< 90 seconds)
-    is_reel_suitable = 0 < duration <= 90
+    # Calculate aspect ratio category
+    aspect_ratio_category = "horizontal"
+    if width > 0 and height > 0:
+        if height > width:
+            ratio = height / width
+            if 1.7 <= ratio <= 1.9:
+                aspect_ratio_category = "vertical_9_16"
+            else:
+                aspect_ratio_category = "vertical"
+        elif abs(height - width) / max(height, width) < 0.1:
+            aspect_ratio_category = "square"
+
+    # Check if suitable for Reels (< 90 seconds, vertical or square)
+    is_reel_suitable = 0 < duration <= 90 and aspect_ratio_category in ["vertical", "vertical_9_16", "square"]
+
+    # Duration warning for videos that don't meet Reels criteria
+    duration_warning = None
+    if duration > 90:
+        duration_warning = f"Video is {duration:.1f}s, exceeds 90s Reels limit"
+    elif duration > 0 and aspect_ratio_category == "horizontal":
+        duration_warning = f"Video is horizontal, not suitable for Reels"
 
     return VideoAnalysis(
         content_type=content_type,
@@ -282,11 +315,13 @@ def analyze_video_basic(video_path: str, duration: float = 0.0) -> VideoAnalysis
         mood="warm",
         has_audio=False,  # Unknown without processing
         suggested_hook=f"{activity.capitalize()} video",
-        is_reel_suitable=is_reel_suitable
+        is_reel_suitable=is_reel_suitable,
+        aspect_ratio_category=aspect_ratio_category,
+        duration_warning=duration_warning
     )
 
 
-def analyze_video(video_path: str, use_ai: bool = True, duration: float = 0.0) -> VideoAnalysis:
+def analyze_video(video_path: str, use_ai: bool = True, duration: float = 0.0, width: int = 0, height: int = 0) -> VideoAnalysis:
     """
     Analyze a video to understand its content.
 
@@ -296,13 +331,84 @@ def analyze_video(video_path: str, use_ai: bool = True, duration: float = 0.0) -
         video_path: Path to the video file
         use_ai: Whether to use AI for analysis (default True)
         duration: Video duration in seconds (if known)
+        width: Video width (if known)
+        height: Video height (if known)
 
     Returns:
         VideoAnalysis object with detected content
     """
     # For now, use basic analysis (AI video analysis requires frame extraction)
     # TODO: Add AI video analysis with frame extraction
-    return analyze_video_basic(video_path, duration)
+    return analyze_video_basic(video_path, duration, width, height)
+
+
+def analyze_carousel(media_paths: list[str], use_ai: bool = True) -> CarouselAnalysis:
+    """
+    Analyze multiple images for carousel caption.
+
+    Args:
+        media_paths: List of paths to media files
+        use_ai: Whether to use AI for analysis (default True)
+
+    Returns:
+        CarouselAnalysis object with narrative flow and unified caption info
+    """
+    # Analyze each item
+    analyses = []
+    for path in media_paths:
+        if is_video_file(path):
+            analyses.append(analyze_video(path, use_ai=use_ai))
+        else:
+            analyses.append(analyze_photo(path, use_ai=use_ai))
+
+    # Determine primary theme
+    piece_types = set()
+    content_types = []
+    for a in analyses:
+        if hasattr(a, 'piece_type'):
+            piece_types.add(a.piece_type)
+        content_types.append(a.content_type)
+
+    # Determine narrative flow
+    if len(set(content_types)) == 1:
+        narrative_flow = "collection"  # Same type of content
+    elif ContentType.PROCESS in content_types and ContentType.FINISHED_PIECE in content_types:
+        narrative_flow = "story"  # Process to result
+    elif ContentType.DETAIL in content_types:
+        narrative_flow = "details"  # Close-ups
+    else:
+        narrative_flow = "mixed"
+
+    # Generate hooks for each item
+    hooks = []
+    for i, a in enumerate(analyses):
+        if hasattr(a, 'suggested_hook'):
+            hooks.append(f"Slide {i+1}: {a.suggested_hook}")
+        else:
+            hooks.append(f"Slide {i+1}")
+
+    # Generate CTA based on flow
+    cta_templates = {
+        "collection": "Which one's your favorite? Let me know below!",
+        "story": "From start to finish - the full journey of this piece.",
+        "details": "Swipe to see all the details of this piece.",
+        "mixed": "Swipe through to see more!",
+    }
+    cta = cta_templates.get(narrative_flow, "Swipe for more!")
+
+    # Primary theme
+    if piece_types:
+        primary_theme = " and ".join(sorted(piece_types)[:2])
+    else:
+        primary_theme = "ceramic pieces"
+
+    return CarouselAnalysis(
+        content_types=content_types,
+        primary_theme=primary_theme,
+        narrative_flow=narrative_flow,
+        hooks=hooks,
+        cta=cta
+    )
 
 
 def analyze_photo_with_ai(photo_path: str) -> PhotoAnalysis:
@@ -566,7 +672,7 @@ def generate_cta(analysis: PhotoAnalysis) -> str:
     return options[0]
 
 
-def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None) -> str:
+def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None, is_reel: bool = False, is_carousel: bool = False) -> str:
     """
     Select appropriate hashtags based on content type.
 
@@ -576,8 +682,10 @@ def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None) -> str
     - 3 Local/Discovery Tags
 
     Args:
-        analysis: PhotoAnalysis object
+        analysis: PhotoAnalysis or VideoAnalysis object
         hashtag_library: Optional hashtag library content
+        is_reel: Whether this is a Reel (adds Reels-specific tags)
+        is_carousel: Whether this is a carousel (adds carousel tags)
 
     Returns:
         String of hashtags
@@ -605,8 +713,14 @@ def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None) -> str
 
     topic_tags = topic_sets.get(analysis.content_type, topic_sets[ContentType.FINISHED_PIECE])
 
-    # Local/Discovery tags (video content gets Reels tag)
-    if analysis.content_type in [ContentType.PROCESS_VIDEO, ContentType.KILN_REVEAL_VIDEO,
+    # Local/Discovery tags
+    if is_reel:
+        # Reels-specific discovery tags
+        local_tags = ["#potteryreels", "#satisfying", "#asmrpottery"]
+    elif is_carousel:
+        # Carousel-specific tags
+        local_tags = ["#potterycarousel", "#longbeachartist", "#socalartist"]
+    elif analysis.content_type in [ContentType.PROCESS_VIDEO, ContentType.KILN_REVEAL_VIDEO,
                                   ContentType.STUDIO_TOUR, ContentType.TIME_LAPSE]:
         local_tags = ["#longbeachartist", "#socalartist", "#potteryreels"]
     else:
@@ -618,10 +732,84 @@ def select_hashtags(analysis: PhotoAnalysis, hashtag_library: str = None) -> str
     return " ".join(all_tags)
 
 
+def generate_caption_for_carousel(
+    analysis: CarouselAnalysis,
+    voice_rules: str = None,
+    include_cta: bool = True
+) -> GeneratedCaption:
+    """
+    Generate a complete caption for a carousel post.
+
+    Args:
+        analysis: CarouselAnalysis object
+        voice_rules: Optional voice rules content
+        include_cta: Whether to include call-to-action
+
+    Returns:
+        GeneratedCaption with all components
+    """
+    # Carousel hooks based on narrative flow
+    hook_templates = {
+        "collection": f"Fresh from the kiln! {analysis.primary_theme.capitalize()} - swipe to see them all",
+        "story": f"From lump of clay to finished {analysis.primary_theme} - the full journey",
+        "details": f"The little details make this {analysis.primary_theme} special",
+        "mixed": f"{analysis.primary_theme.capitalize()} - {len(analysis.content_types)} slides of pottery goodness",
+    }
+
+    hook = hook_templates.get(analysis.narrative_flow, f"Swipe to see more {analysis.primary_theme}")
+
+    # Body based on narrative flow
+    body_templates = {
+        "collection": "Each piece has its own personality. Which one speaks to you?",
+        "story": "Every piece tells a story from start to finish. This is the journey of creation.",
+        "details": "Sometimes you need to zoom in to really appreciate the glaze and texture.",
+        "mixed": "A mix of process and finished pieces from the studio.",
+    }
+
+    body = body_templates.get(analysis.narrative_flow, "Swipe through for more!")
+
+    # CTA
+    cta = analysis.cta if include_cta else ""
+
+    # Hashtags for carousel
+    hashtags = select_hashtags(
+        PhotoAnalysis(
+            content_type=ContentType.FINISHED_PIECE,
+            piece_type=analysis.primary_theme,
+            primary_colors=["earth tones"],
+            secondary_colors=[],
+            glaze_type=None,
+            technique=None,
+            mood="warm",
+            is_process=False,
+            dimensions_visible=False,
+            suggested_hook=hook
+        ),
+        is_carousel=True
+    )
+
+    # Assemble
+    parts = [hook, "", body]
+    if cta:
+        parts.extend(["", cta])
+    parts.extend(["", ".", hashtags])
+
+    full_caption = "\n".join(parts)
+
+    return GeneratedCaption(
+        hook=hook,
+        body=body,
+        cta=cta,
+        hashtags=hashtags,
+        full_caption=full_caption
+    )
+
+
 def generate_caption(
     analysis: PhotoAnalysis,
     voice_rules: str = None,
-    include_cta: bool = True
+    include_cta: bool = True,
+    is_reel: bool = False
 ) -> GeneratedCaption:
     """
     Generate a complete caption from photo/video analysis.
@@ -630,6 +818,7 @@ def generate_caption(
         analysis: PhotoAnalysis or VideoAnalysis object
         voice_rules: Optional voice rules content (loaded from file if not provided)
         include_cta: Whether to include call-to-action
+        is_reel: Whether this is a Reel (shorter, punchier style)
 
     Returns:
         GeneratedCaption with all components
@@ -638,7 +827,7 @@ def generate_caption(
     is_video = isinstance(analysis, VideoAnalysis)
 
     if is_video:
-        return generate_caption_for_video(analysis, voice_rules, include_cta)
+        return generate_caption_for_video(analysis, voice_rules, include_cta, is_reel)
 
     # Generate components for photo
     hook = generate_hook(analysis)
@@ -676,7 +865,8 @@ def generate_caption(
 def generate_caption_for_video(
     analysis: VideoAnalysis,
     voice_rules: str = None,
-    include_cta: bool = True
+    include_cta: bool = True,
+    is_reel: bool = False
 ) -> GeneratedCaption:
     """
     Generate a complete caption from video analysis.
@@ -685,21 +875,41 @@ def generate_caption_for_video(
         analysis: VideoAnalysis object
         voice_rules: Optional voice rules content
         include_cta: Whether to include call-to-action
+        is_reel: Whether this is a Reel (shorter, punchier style)
 
     Returns:
         GeneratedCaption with all components
     """
-    # Generate video-specific hook
-    hook = f"{analysis.activity.capitalize()} - {analysis.suggested_hook}"
+    # Reels get shorter, punchier hooks
+    if is_reel or analysis.is_reel_suitable:
+        reel_hooks = [
+            f"Wait for it... {analysis.activity}",
+            f"POV: {analysis.activity}",
+            f"{analysis.activity.capitalize()} in real time",
+            f"The most satisfying part of pottery",
+            f"Pottery ASMR: {analysis.activity}",
+        ]
+        hook = reel_hooks[0]  # Could randomize later
+    else:
+        hook = f"{analysis.activity.capitalize()} - {analysis.suggested_hook}"
 
     # Generate body using shared function
     body = generate_body(analysis)
 
-    # Generate CTA
-    cta = generate_cta(analysis) if include_cta else ""
+    # Generate CTA (Reels get different CTAs)
+    if is_reel or analysis.is_reel_suitable:
+        reel_ctas = [
+            "Save this for later",
+            "Drop a 🎨 if this was satisfying",
+            "Follow for more pottery content",
+            "What should I make next?",
+        ]
+        cta = reel_ctas[0] if include_cta else ""
+    else:
+        cta = generate_cta(analysis) if include_cta else ""
 
-    # Select hashtags
-    hashtags = select_hashtags(analysis)
+    # Select hashtags (Reels get Reels-specific tags)
+    hashtags = select_hashtags(analysis, is_reel=(is_reel or analysis.is_reel_suitable))
 
     # Assemble full caption
     parts = [hook]

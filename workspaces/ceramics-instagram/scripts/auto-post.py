@@ -41,20 +41,29 @@ from lib.photo_export import (
     ensure_photos_app_running,
     is_video_file,
     get_video_info,
+    get_aspect_ratio_category,
     MediaType,
+    MediaInfo,
+    MediaGroup,
 )
 
 from lib.caption_generator import (
     analyze_photo,
     analyze_video,
+    analyze_carousel,
     generate_caption,
+    generate_caption_for_carousel,
     PhotoAnalysis,
     VideoAnalysis,
+    CarouselAnalysis,
     ContentType,
 )
 
 from lib.instagram_scheduler import (
     ScheduledPost,
+    ScheduledReel,
+    ScheduledStory,
+    ScheduledCarousel,
     InstagramScheduler,
     get_posting_schedule,
 )
@@ -88,6 +97,81 @@ def log(message: str, level: str = "INFO") -> None:
     log_file = get_logs_dir() / "auto-post.log"
     with open(log_file, "a") as f:
         f.write(f"[{timestamp}] [{level}] {message}\n")
+
+
+def determine_content_destination(media: MediaInfo, analysis, force_type: str = None) -> str:
+    """
+    Route content to appropriate upload flow.
+
+    Args:
+        media: MediaInfo object with metadata
+        analysis: PhotoAnalysis or VideoAnalysis object
+        force_type: Force a specific type ("reel", "story", "post", "carousel")
+
+    Returns:
+        Destination string: "feed_post", "reel", "story", or "carousel"
+    """
+    # Handle forced type
+    if force_type:
+        return force_type
+
+    # Photos always go to feed posts (or stories if specified)
+    if media.media_type == MediaType.PHOTO:
+        return "feed_post"
+
+    # Videos need routing logic
+    if isinstance(analysis, VideoAnalysis):
+        # Check if suitable for Reels
+        if analysis.is_reel_suitable and media.aspect_ratio in ["vertical", "vertical_9_16", "square"]:
+            return "reel"
+
+        # Not suitable for Reels - check why
+        if analysis.duration_warning:
+            log(f"  Video routing note: {analysis.duration_warning}", level="INFO")
+
+        # Fall back to feed video
+        return "feed_post"
+
+    return "feed_post"
+
+
+def group_media_for_carousel(media_items: list[MediaInfo]) -> Optional[MediaGroup]:
+    """
+    Group related media items for carousel posting.
+
+    Args:
+        media_items: List of MediaInfo objects
+
+    Returns:
+        MediaGroup if suitable for carousel, None otherwise
+    """
+    # Need at least 2 items for carousel
+    if len(media_items) < 2:
+        return None
+
+    # Check if items are from same session (same date)
+    dates = set(m.date for m in media_items)
+    if len(dates) > 1:
+        return None  # Different dates, not a carousel
+
+    # Check if all are photos (carousels typically don't mix well with videos)
+    photos = [m for m in media_items if m.media_type == MediaType.PHOTO]
+    if len(photos) < 2:
+        return None  # Not enough photos
+
+    # Check aspect ratios - recommend square for carousels
+    aspect_ratios = set(m.aspect_ratio for m in photos)
+    if len(aspect_ratios) > 2:
+        return None  # Too varied aspect ratios
+
+    # Limit to 10 items (Instagram carousel max)
+    carousel_items = photos[:10]
+
+    return MediaGroup(
+        items=carousel_items,
+        group_type="carousel",
+        grouping_reason=f"Same session, {len(carousel_items)} photos"
+    )
 
 
 def generate_report(posts: list[dict], output_dir: Path) -> Path:
@@ -127,7 +211,13 @@ def generate_report(posts: list[dict], output_dir: Path) -> Path:
     return report_path
 
 
-def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3) -> dict:
+def run_workflow(
+    dry_run: bool = False,
+    use_ai: bool = True,
+    max_count: int = 3,
+    force_type: str = None,
+    enable_carousel: bool = False
+) -> dict:
     """
     Run the complete auto-post workflow.
 
@@ -135,6 +225,8 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
         dry_run: If True, don't actually schedule posts
         use_ai: If True, use AI for photo analysis
         max_count: Maximum number of photos to process (1-3)
+        force_type: Force content type ("reel", "story", "post", "carousel")
+        enable_carousel: If True, enable carousel grouping for multiple photos
 
     Returns:
         Dict with workflow results
@@ -199,6 +291,7 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
             is_video = media.media_type == MediaType.VIDEO
             media_type_str = "video" if is_video else "photo"
             log(f"Processing {media_type_str} {i+1}: {media.filename}")
+            log(f"  Aspect ratio: {media.aspect_ratio}")
 
             # Export media
             log(f"  Exporting {media_type_str}...")
@@ -216,10 +309,23 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
             log(f"  Analyzing {media_type_str}...")
             try:
                 if is_video:
-                    # Get video duration if available
-                    duration = media.duration if media.duration > 0 else 0
-                    analysis = analyze_video(media_path, use_ai=use_ai, duration=duration)
+                    # Get video info for duration and dimensions
+                    video_info = get_video_info(media_path)
+                    duration = video_info.get("duration", media.duration if media.duration > 0 else 0)
+                    width = video_info.get("width", media.width)
+                    height = video_info.get("height", media.height)
+
+                    analysis = analyze_video(
+                        media_path,
+                        use_ai=use_ai,
+                        duration=duration,
+                        width=width,
+                        height=height
+                    )
                     log(f"  Detected: {analysis.video_type} video, {analysis.duration_seconds}s")
+                    if analysis.duration_warning:
+                        log(f"  Warning: {analysis.duration_warning}", level="WARNING")
+                    log(f"  Reel suitable: {analysis.is_reel_suitable}")
                 else:
                     analysis = analyze_photo(media_path, use_ai=use_ai)
                     log(f"  Detected: {analysis.piece_type}, {analysis.content_type.value}")
@@ -235,7 +341,9 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
                         mood="warm",
                         has_audio=False,
                         suggested_hook="Pottery process video",
-                        is_reel_suitable=True
+                        is_reel_suitable=False,
+                        aspect_ratio_category=media.aspect_ratio,
+                        duration_warning=None
                     )
                 else:
                     analysis = PhotoAnalysis(
@@ -251,14 +359,20 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
                         suggested_hook="Handmade ceramic piece"
                     )
 
+            # Determine content destination
+            destination = determine_content_destination(media, analysis, force_type)
+            log(f"  Content destination: {destination}")
+
             # Generate caption
             log(f"  Generating caption...")
-            caption = generate_caption(analysis)
+            is_reel = destination == "reel"
+            caption = generate_caption(analysis, is_reel=is_reel)
             log(f"  Caption length: {len(caption.full_caption)} chars")
 
             posts_to_schedule.append({
                 "media_path": media_path,
-                "media_type": media_type_str,
+                "media_type": destination,  # feed_post, reel, story
+                "original_type": media_type_str,
                 "caption": caption.full_caption,
                 "schedule_time": schedule[i],
                 "media_id": media.id,
@@ -270,6 +384,8 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
                     "technique": getattr(analysis, 'technique', None),
                     "video_type": getattr(analysis, 'video_type', None),
                     "duration": getattr(analysis, 'duration_seconds', None),
+                    "aspect_ratio": getattr(analysis, 'aspect_ratio_category', None),
+                    "is_reel_suitable": getattr(analysis, 'is_reel_suitable', None),
                 }
             })
 
@@ -296,21 +412,29 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
                 if not scheduler.login_to_meta():
                     raise Exception("Failed to login to Meta")
 
-                schedule_results = scheduler.schedule_week(
-                    [ScheduledPost(
-                        photo_path=p["media_path"],
-                        caption=p["caption"],
-                        schedule_time=p["schedule_time"]
-                    ) for p in posts_to_schedule],
-                    dry_run=False
-                )
+                # Schedule each post based on its destination type
+                for post in posts_to_schedule:
+                    destination = post["media_type"]
 
-                # Update post statuses
-                for i, post in enumerate(posts_to_schedule):
-                    if i < len(schedule_results.get("success", [])):
-                        post["status"] = "scheduled"
+                    if destination == "reel":
+                        reel = ScheduledReel(
+                            video_path=post["media_path"],
+                            caption=post["caption"],
+                            schedule_time=post["schedule_time"],
+                            duration_seconds=post["analysis"].get("duration", 30.0),
+                            aspect_ratio=post["analysis"].get("aspect_ratio", "vertical")
+                        )
+                        success = scheduler.schedule_reel(reel, dry_run=False)
                     else:
-                        post["status"] = "failed"
+                        # Default: feed post
+                        scheduled_post = ScheduledPost(
+                            photo_path=post["media_path"],
+                            caption=post["caption"],
+                            schedule_time=post["schedule_time"]
+                        )
+                        success = scheduler.schedule_post(scheduled_post, dry_run=False)
+
+                    post["status"] = "scheduled" if success else "failed"
                     results["posts"].append(post)
 
             finally:
@@ -321,13 +445,13 @@ def run_workflow(dry_run: bool = False, use_ai: bool = True, max_count: int = 3)
         for post in posts_to_schedule:
             if post.get("status") in ["scheduled", "dry_run"]:
                 if dry_run:
-                    log(f"  Would move {post['media_type']} {post['media_index'] + 1} to 'Posted'")
+                    log(f"  Would move {post['original_type']} {post['media_index'] + 1} to 'Posted'")
                 else:
                     success = move_photo_by_index("To Post", "Posted", post["media_index"])
                     if success:
-                        log(f"  Moved {post['media_type']} {post['media_index'] + 1} to 'Posted'")
+                        log(f"  Moved {post['original_type']} {post['media_index'] + 1} to 'Posted'")
                     else:
-                        log(f"  Failed to move {post['media_type']} {post['media_index'] + 1}", level="WARNING")
+                        log(f"  Failed to move {post['original_type']} {post['media_index'] + 1}", level="WARNING")
 
         # Step 8: Generate report
         log("Generating report...")
@@ -484,6 +608,9 @@ Examples:
     python auto-post.py --status  Show pipeline status
     python auto-post.py --cron-test  Verify cron setup
     python auto-post.py --no-ai   Run without AI analysis
+    python auto-post.py --reel    Force content as Reel
+    python auto-post.py --story   Force content as Story
+    python auto-post.py --carousel  Enable carousel grouping
         """
     )
 
@@ -519,6 +646,30 @@ Examples:
         help="Number of photos to process (default: 3, max: 3)"
     )
 
+    parser.add_argument(
+        "--reel",
+        action="store_true",
+        help="Force content as Reel (vertical video <90s)"
+    )
+
+    parser.add_argument(
+        "--story",
+        action="store_true",
+        help="Force content as Story (24h ephemeral)"
+    )
+
+    parser.add_argument(
+        "--carousel",
+        action="store_true",
+        help="Enable carousel grouping for multiple photos"
+    )
+
+    parser.add_argument(
+        "--post",
+        action="store_true",
+        help="Force content as feed post (no routing)"
+    )
+
     args = parser.parse_args()
 
     if args.status:
@@ -532,21 +683,46 @@ Examples:
         use_ai = not args.no_ai
         max_count = args.count
 
+        # Determine force type
+        force_type = None
+        if args.reel:
+            force_type = "reel"
+        elif args.story:
+            force_type = "story"
+        elif args.post:
+            force_type = "feed_post"
+
         print("=" * 60)
         print("Instagram Auto-Post")
         print("=" * 60)
         print(f"Mode: {'TEST (dry run)' if dry_run else 'LIVE'}")
         print(f"AI Analysis: {'Enabled' if use_ai else 'Disabled'}")
         print(f"Max Photos: {max_count}")
+        if force_type:
+            print(f"Force Type: {force_type}")
+        if args.carousel:
+            print(f"Carousel: Enabled")
         print("=" * 60)
 
-        results = run_workflow(dry_run=dry_run, use_ai=use_ai, max_count=max_count)
+        results = run_workflow(
+            dry_run=dry_run,
+            use_ai=use_ai,
+            max_count=max_count,
+            force_type=force_type,
+            enable_carousel=args.carousel
+        )
 
         print("\n" + "=" * 60)
         print("Results")
         print("=" * 60)
         print(f"Status: {results['status']}")
         print(f"Posts processed: {len(results['posts'])}")
+
+        # Show content types
+        for post in results['posts']:
+            dest = post.get('media_type', 'unknown')
+            orig = post.get('original_type', 'unknown')
+            print(f"  - {Path(post['media_path']).name}: {orig} -> {dest}")
 
         if results['errors']:
             print(f"\nErrors:")

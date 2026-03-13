@@ -23,7 +23,9 @@ from enum import Enum
 class MediaType(Enum):
     """Type of media item."""
     PHOTO = "photo"
-    VIDEO = "video"
+    VIDEO = "video"      # Feed video (horizontal or long)
+    REEL = "reel"        # Vertical, <90s
+    STORY = "story"      # 24h ephemeral content
 
 
 @dataclass
@@ -37,6 +39,27 @@ class MediaInfo:
     album: str
     media_type: MediaType = MediaType.PHOTO
     duration: float = 0.0  # Duration in seconds (for videos)
+    aspect_ratio: str = "horizontal"  # vertical_9_16, vertical, square, horizontal
+
+
+@dataclass
+class MediaGroup:
+    """A group of media items for a carousel."""
+    items: list["MediaInfo"]
+    group_type: str  # "carousel", "single", "reel"
+    grouping_reason: str  # Why these were grouped
+
+
+def get_aspect_ratio_category(width: int, height: int) -> str:
+    """Categorize video aspect ratio."""
+    if height > width:
+        ratio = height / width
+        if 1.7 <= ratio <= 1.9:  # 9:16 is ~1.778
+            return "vertical_9_16"
+        return "vertical"
+    elif abs(height - width) / max(height, width, 1) < 0.1:
+        return "square"
+    return "horizontal"
 
 
 # Backward compatibility alias
@@ -126,6 +149,12 @@ def create_albums(albums: list[str] = None) -> dict[str, bool]:
     return results
 
 
+def create_carousel_album() -> bool:
+    """Create 'To Post - Carousel' album if needed."""
+    results = create_albums(["To Post - Carousel"])
+    return results.get("To Post - Carousel", False)
+
+
 def get_media_from_album(album_name: str) -> list[MediaInfo]:
     """
     Get list of media (photos and videos) from an album.
@@ -186,15 +215,20 @@ def get_media_from_album(album_name: str) -> list[MediaInfo]:
                     filename = parts[1].strip().lower()
                     is_video = any(ext in filename for ext in [".mov", ".mp4", ".m4v"])
 
+                    # Parse dimensions
+                    width = int(parts[3].strip()) if parts[3].strip().isdigit() else 0
+                    height = int(parts[4].strip()) if parts[4].strip().isdigit() else 0
+
                     media_items.append(MediaInfo(
                         id=parts[0].strip(),
                         filename=parts[1].strip(),
                         date=parts[2].strip(),
-                        width=int(parts[3].strip()) if parts[3].strip().isdigit() else 0,
-                        height=int(parts[4].strip()) if parts[4].strip().isdigit() else 0,
+                        width=width,
+                        height=height,
                         album=album_name,
                         media_type=MediaType.VIDEO if is_video else MediaType.PHOTO,
-                        duration=0.0  # Will be detected during export if needed
+                        duration=0.0,  # Will be detected during export if needed
+                        aspect_ratio=get_aspect_ratio_category(width, height)
                     ))
 
     return media_items
